@@ -74,7 +74,7 @@
             void   resize (int width, int height);
             void on_drag(int pointer_x, int pointer_y);
             void on_click(int pointer_x, int pointer_y, bool down);
-            void move_camera(const glm::vec3& translation);
+            void move_camera_by_key(char key);
 
         private:
 

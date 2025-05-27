@@ -132,10 +132,17 @@ namespace udit
 
         texture_cube.bind();
 
-        const glm::mat4 model_view_matrix = camera.get_transform_matrix_inverse();
         const glm::mat4& projection_matrix = camera.get_projection_matrix();
 
-        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
+        // Factor de escala (ajusta este valor según lo que necesites)
+        float scaleFactor = 50.0f;
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scaleFactor));
+        glm::mat4 scaled_model_view = camera.get_transform_matrix_inverse() * scaleMatrix;
+
+        //const glm::mat4 model_view_matrix = camera.get_transform_matrix_inverse();
+        //glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
+
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(scaled_model_view));
         glUniformMatrix4fv(projection_matrix_id, 1, GL_FALSE, glm::value_ptr(projection_matrix));
 
         glDepthMask(GL_FALSE);

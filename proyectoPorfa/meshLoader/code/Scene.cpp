@@ -101,7 +101,7 @@ namespace udit
     {
         angle += 0.01f;
 
-        //camera
+               //camera
         angle_around_x += angle_delta_x;
         angle_around_y += angle_delta_y;
 
@@ -114,12 +114,12 @@ namespace udit
             {
                 angle_around_x = +1.5;
             }
-
         glm::mat4 camera_rotation(1);
-
         camera_rotation = glm::rotate(camera_rotation, angle_around_y, glm::vec3(0.f, 1.f, 0.f));
         camera_rotation = glm::rotate(camera_rotation, angle_around_x, glm::vec3(1.f, 0.f, 0.f));
 
+
+        glm::vec3 front = glm::normalize(glm::vec3(camera.get_target()) - glm::vec3(camera.get_location()));
         camera.set_target(0, 0, -1);
         camera.rotate(camera_rotation);
     }
@@ -131,16 +131,18 @@ namespace udit
         //renderiza el kybox
         skybox.render(camera);
 
+
+        // acomoda la vista del modelo
         glUseProgram(program_id);
-        // Se rota el malla y se empuja hacia el fondo:
-        glm::mat4 model_view_matrix(1);
+        glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
+        glm::mat4 model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, glm::vec3(0.f, -1.f, -3.5f));
+        model_matrix = glm::rotate(model_matrix, 0.8f, glm::vec3(1.f, 0.f, 0.f));
+        model_matrix = glm::rotate(model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
 
-        model_view_matrix = glm::translate(model_view_matrix, glm::vec3(0.f, -1.f, -3.5f));
-        model_view_matrix = glm::rotate(model_view_matrix, 0.8f, glm::vec3(1.f, 0.f, 0.f));
-        model_view_matrix = glm::rotate(model_view_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
-
+        // Combina la vista y el modelo:
+        glm::mat4 model_view_matrix = view_matrix * model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
-
 
         // Vincular la textura a la unidad 0
         glActiveTexture(GL_TEXTURE0);
@@ -419,7 +421,9 @@ namespace udit
         {
             angle_delta_x = 0.025f * float(last_pointer_y - pointer_y) / float(height);
             angle_delta_y = 0.025f * float(last_pointer_x - pointer_x) / float(width);
+
         }
+
     }
 
     void Scene::on_click(int pointer_x, int pointer_y, bool down)
@@ -433,11 +437,42 @@ namespace udit
         {
             angle_delta_x = angle_delta_y = 0.0;
         }
+
     }
 
-    void Scene::move_camera(const glm::vec3& translation)
+    void Scene::move_camera_by_key(char key)
     {
-        // Aquí llamamos a la función move de la cámara utilizando el vector de traslación.
+        // Define una velocidad para el movimiento (ajústala según lo necesites)
+        float moveSpeed = 0.1f;
+
+        // Calcula el vector "front" de la cámara: (target - location) normalizado.
+        // Notarás que en tu cámara, "move" suma una traslación a location y target.
+        glm::vec3 front = glm::normalize(glm::vec3(camera.get_target()) - glm::vec3(camera.get_location()));
+
+        // Calcula el vector "right" usando el up mundial (0,1,0). El vector right es:
+        glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+        // En base a la tecla, calcula el vector de traslación:
+        glm::vec3 translation(0.0f);
+        switch (key)
+        {
+            case 'w':
+                translation = front * moveSpeed;
+                break;
+            case 's':
+                translation = -front * moveSpeed;
+                break;
+            case 'a':
+                translation = -right * moveSpeed;
+                break;
+            case 'd':
+                translation = right * moveSpeed;
+                break;
+            default:
+                break;
+        }
+
+        // Llama a la función move de la cámara
         camera.move(translation);
     }
 

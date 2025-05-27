@@ -69,27 +69,21 @@ int main (int , char * [])
                     break;
                 }
 
-                case SDL_KEYDOWN:  // Aquí detectamos la pulsación de una tecla.
+                case SDL_KEYDOWN:
                 {
-                    // Define una velocidad de movimiento (puedes ajustarla según tu escena)
-                    const float moveSpeed = 0.1f;
                     switch (event.key.keysym.sym)
                     {
                     case SDLK_w:
-                        // Mover hacia adelante, suponiendo que avance en el eje z negativo.
-                        scene.move_camera(glm::vec3(0.0f, 0.0f, -moveSpeed));
+                        scene.move_camera_by_key('w');
                         break;
                     case SDLK_s:
-                        // Mover hacia atrás.
-                        scene.move_camera(glm::vec3(0.0f, 0.0f, moveSpeed));
+                        scene.move_camera_by_key('s');
                         break;
                     case SDLK_a:
-                        // Mover hacia la izquierda.
-                        scene.move_camera(glm::vec3(-moveSpeed, 0.0f, 0.0f));
+                        scene.move_camera_by_key('a');
                         break;
                     case SDLK_d:
-                        // Mover hacia la derecha.
-                        scene.move_camera(glm::vec3(moveSpeed, 0.0f, 0.0f));
+                        scene.move_camera_by_key('d');
                         break;
                     }
                     break;
