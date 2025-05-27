@@ -8,6 +8,8 @@
     #include <glad/glad.h>
     #include <glm.hpp>
     #include <string>
+    #include "Camera.hpp"
+    #include "Skybox.hpp"   
 
     namespace udit
     {
@@ -39,12 +41,26 @@
             GLint   model_view_matrix_id;
             GLint   projection_matrix_id;
 
-
-
             float   angle;
 
-        public:
+            Camera camera;
+            Skybox skybox;
 
+            int    width;
+            int    height;
+
+            float  angle_around_x;
+            float  angle_around_y;
+            float  angle_delta_x;
+            float  angle_delta_y;
+
+            bool   pointer_pressed;
+            int    last_pointer_x;
+            int    last_pointer_y;
+
+
+        public:
+            GLuint program_id;
             static const std::string texture_path;
             GLuint texture_id;
             bool there_is_texture;
@@ -56,6 +72,9 @@
             void   update ();
             void   render ();
             void   resize (int width, int height);
+            void on_drag(int pointer_x, int pointer_y);
+            void on_click(int pointer_x, int pointer_y, bool down);
+            void move_camera(const glm::vec3& translation);
 
         private:
 

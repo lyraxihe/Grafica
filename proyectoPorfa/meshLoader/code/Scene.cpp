@@ -52,8 +52,10 @@ namespace udit
 
 
     Scene::Scene(int width, int height)
-        :
+    :
+        skybox("../../../shared/assets/sky-cube-map-"), 
         angle(0)
+        
     {
         // Se establece la configuración básica:
 
@@ -62,8 +64,7 @@ namespace udit
         glClearColor(.1f, .1f, .1f, 1.f);
 
         // Se compilan y se activan los shaders:
-
-        GLuint program_id = compile_shaders();
+        program_id = compile_shaders();
 
         glUseProgram(program_id);
 
@@ -78,6 +79,10 @@ namespace udit
         glUniform1i(textureUniformLocation, 0);
 
         resize(width, height);
+
+        angle_around_x = angle_delta_x = 0.0;
+        angle_around_y = angle_delta_y = 0.0;
+        pointer_pressed = false;
 
         load_mesh("../../../shared/assets/flor.obj");
 
@@ -95,14 +100,39 @@ namespace udit
     void Scene::update()
     {
         angle += 0.01f;
+
+        //camera
+        angle_around_x += angle_delta_x;
+        angle_around_y += angle_delta_y;
+
+        if (angle_around_x < -1.5)
+        {
+            angle_around_x = -1.5;
+        }
+        else
+            if (angle_around_x > +1.5)
+            {
+                angle_around_x = +1.5;
+            }
+
+        glm::mat4 camera_rotation(1);
+
+        camera_rotation = glm::rotate(camera_rotation, angle_around_y, glm::vec3(0.f, 1.f, 0.f));
+        camera_rotation = glm::rotate(camera_rotation, angle_around_x, glm::vec3(1.f, 0.f, 0.f));
+
+        camera.set_target(0, 0, -1);
+        camera.rotate(camera_rotation);
     }
 
     void Scene::render()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Se rota el malla y se empuja hacia el fondo:
+        //renderiza el kybox
+        skybox.render(camera);
 
+        glUseProgram(program_id);
+        // Se rota el malla y se empuja hacia el fondo:
         glm::mat4 model_view_matrix(1);
 
         model_view_matrix = glm::translate(model_view_matrix, glm::vec3(0.f, -1.f, -3.5f));
@@ -118,18 +148,29 @@ namespace udit
 
 
         // Se dibuja la malla:
-
         glBindVertexArray(vao_id);
         glDrawElements(GL_TRIANGLES, number_of_indices, GL_UNSIGNED_SHORT, 0);
+        
+        glBindVertexArray(0);
+        glUseProgram(0);
+
     }
 
-    void Scene::resize(int width, int height)
+    void Scene::resize(int width_, int height_)
     {
+
+        //glViewport(0, 0, width_, height_);
+
+        width = width_;
+        height = height_;
+
+        camera.set_ratio(float(width_) / height_);
+
         glm::mat4 projection_matrix = glm::perspective(20.f, GLfloat(width) / height, 1.f, 5000.f);
 
         glUniformMatrix4fv(projection_matrix_id, 1, GL_FALSE, glm::value_ptr(projection_matrix));
 
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, width_, height_);
     }
 
     GLuint Scene::compile_shaders()
@@ -223,9 +264,9 @@ namespace udit
 
         cerr << info_log.c_str() << endl;
 
-#ifdef _MSC_VER
+        #ifdef _MSC_VER
         //OutputDebugStringA (info_log.c_str ());
-#endif
+        #endif
 
         assert(false);
     }
@@ -371,6 +412,35 @@ namespace udit
 
         return static_cast<GLuint>(-1);
     }
+
+    void Scene::on_drag(int pointer_x, int pointer_y)
+    {
+        if (pointer_pressed)
+        {
+            angle_delta_x = 0.025f * float(last_pointer_y - pointer_y) / float(height);
+            angle_delta_y = 0.025f * float(last_pointer_x - pointer_x) / float(width);
+        }
+    }
+
+    void Scene::on_click(int pointer_x, int pointer_y, bool down)
+    {
+        if ((pointer_pressed = down) == true)
+        {
+            last_pointer_x = pointer_x;
+            last_pointer_y = pointer_y;
+        }
+        else
+        {
+            angle_delta_x = angle_delta_y = 0.0;
+        }
+    }
+
+    void Scene::move_camera(const glm::vec3& translation)
+    {
+        // Aquí llamamos a la función move de la cámara utilizando el vector de traslación.
+        camera.move(translation);
+    }
+
 
 }
 
