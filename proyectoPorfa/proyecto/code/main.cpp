@@ -38,7 +38,7 @@ int main (int , char * [])
 
         while (SDL_PollEvent (&event) > 0)
         {
-            switch (event.type)
+ switch (event.type)
             {
                 case SDL_MOUSEBUTTONDOWN:
                 {
@@ -74,16 +74,16 @@ int main (int , char * [])
                     switch (event.key.keysym.sym)
                     {
                     case SDLK_w:
-                        scene.move_camera_by_key('w');
+                        scene.move_camera('w');
                         break;
                     case SDLK_s:
-                        scene.move_camera_by_key('s');
+                        scene.move_camera('s');
                         break;
                     case SDLK_a:
-                        scene.move_camera_by_key('a');
+                        scene.move_camera('a');
                         break;
                     case SDLK_d:
-                        scene.move_camera_by_key('d');
+                        scene.move_camera('d');
                         break;
                     }
                     break;
