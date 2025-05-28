@@ -11,6 +11,7 @@
     #include "Object.hpp"
     #include "Camera.hpp"
     #include "Skybox.hpp"  
+    #include "Terrain.hpp"
 
     namespace udit
     {
@@ -32,7 +33,7 @@
 
 
             static const std::string   vertex_shader_code;
-            static const std::string fragment_shader_code;
+            static const std::string   fragment_shader_code;
 
             GLuint  vbo_ids[VBO_COUNT];
             GLuint  vao_id;
@@ -46,6 +47,8 @@
             Object object_2;
 
             float   angle;
+
+            Terrain terrain;
 
             Camera camera;
             Skybox skybox;
@@ -61,7 +64,9 @@
             bool   pointer_pressed;
             int    last_pointer_x;
             int    last_pointer_y;
+
             GLuint program_id;
+
 
         public:
 
@@ -82,7 +87,6 @@
             GLuint compile_shaders        ();
             void   show_linkage_error     (GLuint program_id);
             void   show_compilation_error (GLuint  shader_id);
-
         };
 
     }

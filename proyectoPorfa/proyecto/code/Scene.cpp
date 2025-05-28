@@ -5,8 +5,9 @@
 #include "Scene.hpp"
 #include <cassert>
 #include <iostream>
-
-
+#include <glad/glad.h>
+#include <memory>
+#include <SOIL2.h>
 
 
 using namespace std;
@@ -37,11 +38,13 @@ namespace udit
         "     fragment_color = vec4(texture (sampler, texture_uv).rgb, 0.5);"
         "}";
 
+
     Scene::Scene(int width, int height)
     :
         skybox("../../../shared/assets/sky-cube-map-"), 
         object_1("../../../shared/assets/flor.obj", "../../../shared/assets/florT.jpeg"), 
         object_2("../../../shared/assets/stanford-bunny.obj", "../../../shared/assets/florT.jpeg"),
+        terrain(10.f, 10.f, 50, 50),
         angle(0)
     {
         // Se establece la configuración básica:
@@ -52,7 +55,6 @@ namespace udit
 
         // Se compilan y se activan los shaders:
         program_id = compile_shaders();
-
         glUseProgram(program_id);
 
         model_view_matrix_id = glGetUniformLocation(program_id, "model_view_matrix");
@@ -103,8 +105,9 @@ namespace udit
 
         //renderiza el kybox
         skybox.render(camera);
+        
 
-        //                                                                 -- -- -- -- primer objeto -- -- -- --
+        //                                                                -- -- -- -- primer objeto -- -- -- --
         // acomoda la vista del modelo
         glUseProgram(program_id);
         glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
@@ -141,6 +144,9 @@ namespace udit
         // Se deshabilita la mezcla con el fondo y se restaura escritura en el Z-Buffer:
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
+
+        terrain.render();
+
     }
 
     void Scene::resize(int width_, int height_)
@@ -315,5 +321,6 @@ namespace udit
 
         assert(false);
     }
+
 }
 

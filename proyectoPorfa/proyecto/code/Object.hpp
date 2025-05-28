@@ -22,8 +22,8 @@ namespace udit
             VBO_COUNT
         };
 
-        GLuint  vbo_ids[VBO_COUNT];
         GLuint  vao_id;
+        GLuint  vbo_ids[VBO_COUNT];
 
         GLsizei number_of_indices;
         GLuint texture_id;

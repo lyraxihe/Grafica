@@ -77,7 +77,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../libraries/sdl/include;../../../libraries/glad/include;../../../libraries/glm/include;../../../libraries/assimp/include;../../../libraries/soil2/include;../../../shared/code</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../libraries/sdl/include;../../../libraries/glad/include;../../../libraries/glm/include;../../../libraries/assimp/include;../../../libraries/soil2/include;../../../libraries/half/include;../../../shared/code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -109,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../libraries/sdl/include;../../../libraries/glad/include;../../../libraries/glm/include;../../../libraries/assimp/include;../../../libraries/soil2/include;../../../shared/code</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../libraries/sdl/include;../../../libraries/glad/include;../../../libraries/glm/include;../../../libraries/assimp/include;../../../libraries/soil2/include;../../../libraries/half/include;../../../shared/code</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,17 +145,22 @@
     <ClCompile Include="..\..\code\Object.cpp" />
     <ClCompile Include="..\..\code\Scene.cpp" />
     <ClCompile Include="..\..\code\Skybox.cpp" />
+    <ClCompile Include="..\..\code\Terrain.cpp" />
     <ClCompile Include="..\..\code\Texture_Cube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\shared\code\Window.hpp" />
     <ClInclude Include="..\..\code\Camera.hpp" />
+    <ClInclude Include="..\..\code\Color.hpp" />
+    <ClInclude Include="..\..\code\Color_Buffer.hpp" />
     <ClInclude Include="..\..\code\Object.hpp" />
     <ClInclude Include="..\..\code\Scene.hpp" />
     <ClInclude Include="..\..\code\Skybox.hpp" />
+    <ClInclude Include="..\..\code\Terrain.hpp" />
     <ClInclude Include="..\..\code\Texture_Cube.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="Color_Buffer.hpp" />
+    <ClInclude Include="Terrain.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
