@@ -158,9 +158,6 @@
     <ClInclude Include="..\..\code\Skybox.hpp" />
     <ClInclude Include="..\..\code\Terrain.hpp" />
     <ClInclude Include="..\..\code\Texture_Cube.hpp" />
-    <ClInclude Include="Color.hpp" />
-    <ClInclude Include="Color_Buffer.hpp" />
-    <ClInclude Include="Terrain.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

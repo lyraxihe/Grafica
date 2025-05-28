@@ -7,6 +7,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include "Skybox.hpp"
+#include <gtc/type_ptr.hpp>
 
 namespace udit
 {

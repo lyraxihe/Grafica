@@ -38,7 +38,7 @@ int main (int , char * [])
 
         while (SDL_PollEvent (&event) > 0)
         {
- switch (event.type)
+            switch (event.type)
             {
                 case SDL_MOUSEBUTTONDOWN:
                 {
@@ -71,27 +71,26 @@ int main (int , char * [])
 
                 case SDL_KEYDOWN:
                 {
-                    switch (event.key.keysym.sym)
-                    {
-                    case SDLK_w:
-                        scene.move_camera('w');
-                        break;
-                    case SDLK_s:
-                        scene.move_camera('s');
-                        break;
-                    case SDLK_a:
-                        scene.move_camera('a');
-                        break;
-                    case SDLK_d:
-                        scene.move_camera('d');
-                        break;
-                    }
+                    if (event.key.keysym.sym == SDLK_w) scene.keys[0] = true;
+                    if (event.key.keysym.sym == SDLK_s) scene.keys[1] = true;
+                    if (event.key.keysym.sym == SDLK_a) scene.keys[2] = true;
+                    if (event.key.keysym.sym == SDLK_d) scene.keys[3] = true;
+                    break;
+                }
+
+                case SDL_KEYUP:												  // If a Keyboard key is released
+                {
+                    if (event.key.keysym.sym == SDLK_w) scene.keys[0] = false;
+                    if (event.key.keysym.sym == SDLK_s) scene.keys[1] = false;
+                    if (event.key.keysym.sym == SDLK_a) scene.keys[2] = false;
+                    if (event.key.keysym.sym == SDLK_d) scene.keys[3] = false;
                     break;
                 }
 
                 case SDL_QUIT:
                 {
                     exit = true;
+                    break;
                 }
             }
         }

@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 #include <memory>
 #include <SOIL2.h>
+#include <gtc/type_ptr.hpp>
 
 
 using namespace std;
@@ -59,6 +60,10 @@ namespace udit
 
         model_view_matrix_id = glGetUniformLocation(program_id, "model_view_matrix");
         projection_matrix_id = glGetUniformLocation(program_id, "projection_matrix");
+        normal_matrix_id     = glGetUniformLocation(program_id, "normal_matrix");
+
+        configure_material(program_id);
+        configure_light(program_id);
 
         resize(width, height);
 
@@ -78,25 +83,23 @@ namespace udit
         angle += 0.01f;
 
         //camera
-        angle_around_x += angle_delta_x;
-        angle_around_y += angle_delta_y;
+        glm::vec3 cameraDirection(
+            cos(camera.getRotation_x()) * sin(camera.getRotation_y()),
+            sin(camera.getRotation_x()),
+            cos(camera.getRotation_x()) * cos(camera.getRotation_y())
+        );
 
-        if (angle_around_x < -1.5)
-        {
-            angle_around_x = -1.5;
-        }
-        else
-            if (angle_around_x > +1.5)
-            {
-                angle_around_x = +1.5;
-            }
-        glm::mat4 camera_rotation(1);
-        camera_rotation = glm::rotate(camera_rotation, angle_around_y, glm::vec3(0.f, 1.f, 0.f));
-        camera_rotation = glm::rotate(camera_rotation, angle_around_x, glm::vec3(1.f, 0.f, 0.f));
+        glm::vec3 right = glm::normalize(glm::cross(cameraDirection, glm::vec3(0.f, 1.f, 0.f)));
+        glm::vec3 up = glm::normalize(glm::cross(right, cameraDirection));
 
-        glm::vec3 front = glm::normalize(glm::vec3(camera.get_target()) - glm::vec3(camera.get_location()));
-        camera.set_target(0, 0, -1);
-        camera.rotate(camera_rotation);
+        glm::vec3 movement(0.f);
+
+        if (keys[0]) movement += cameraDirection * 0.01f;
+        if (keys[1]) movement -= cameraDirection * 0.01f;
+        if (keys[2]) movement -= right * 0.01f;
+        if (keys[3]) movement += right * 0.01f;
+
+        camera.move(movement);
     }
 
     void Scene::render()
@@ -119,7 +122,11 @@ namespace udit
         model_matrix = glm::rotate(model_matrix, angle, glm::vec3(0.f, 1.f, 0.f));
 
         glm::mat4 model_view_matrix = view_matrix * model_matrix;
+
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
+
+        glm::mat4 normal_matrix = glm::transpose(glm::inverse(model_view_matrix));
+        glUniformMatrix4fv(normal_matrix_id, 1, GL_FALSE, glm::value_ptr(normal_matrix));
 
         // se renderiza
         object_1.render();
@@ -225,11 +232,14 @@ namespace udit
     {
         if (pointer_pressed)
         {
-            angle_delta_x = 0.025f * float(last_pointer_y - pointer_y) / float(height);
-            angle_delta_y = 0.025f * float(last_pointer_x - pointer_x) / float(width);
+            float delta_x = (pointer_x - last_pointer_x) * 0.005f;
+            float delta_y = (pointer_y - last_pointer_y) * 0.005f;
 
+            camera.rotate(-delta_y, -delta_x);
+
+            last_pointer_x = pointer_x;
+            last_pointer_y = pointer_y;
         }
-
     }
 
     void Scene::on_click(int pointer_x, int pointer_y, bool down)
@@ -241,46 +251,11 @@ namespace udit
         }
         else
         {
-            angle_delta_x = angle_delta_y = 0.0;
+            angle_delta_x = angle_delta_y = 0.f;
         }
 
     }
 
-    void Scene::move_camera(char key)
-    {
-        // Define una velocidad para el movimiento (ajústala según lo necesites)
-        float moveSpeed = 0.1f;
-
-        // Calcula el vector "front" de la cámara: (target - location) normalizado.
-        // Notarás que en tu cámara, "move" suma una traslación a location y target.
-        glm::vec3 front = glm::normalize(glm::vec3(camera.get_target()) - glm::vec3(camera.get_location()));
-
-        // Calcula el vector "right" usando el up mundial (0,1,0). El vector right es:
-        glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
-
-        // En base a la tecla, calcula el vector de traslación:
-        glm::vec3 translation(0.0f);
-        switch (key)
-        {
-        case 'w':
-            translation = front * moveSpeed;
-            break;
-        case 's':
-            translation = -front * moveSpeed;
-            break;
-        case 'a':
-            translation = -right * moveSpeed;
-            break;
-        case 'd':
-            translation = right * moveSpeed;
-            break;
-        default:
-            break;
-        }
-
-        // Llama a la función move de la cámara
-        camera.move(translation);
-    }
 
     void Scene::show_linkage_error(GLuint program_id)
     {
@@ -322,5 +297,24 @@ namespace udit
         assert(false);
     }
 
+    void Scene::configure_material(GLuint program_id)
+    {
+        GLint material_color = glGetUniformLocation(program_id, "material_color");
+
+        glUniform3f(material_color, 1.f, 1.f, 1.f);
+    }
+
+    void Scene::configure_light(GLuint program_id)
+    {
+        GLint light_position = glGetUniformLocation(program_id, "light.position");
+        GLint light_color = glGetUniformLocation(program_id, "light.color");
+        GLint ambient_intensity = glGetUniformLocation(program_id, "ambient_intensity");
+        GLint diffuse_intensity = glGetUniformLocation(program_id, "diffuse_intensity");
+
+        glUniform4f(light_position, 1.0f, 1.f, 1.f, 1.f);
+        glUniform3f(light_color, 1.f, 1.f, 1.f);
+        glUniform1f(ambient_intensity, 0.2f);
+        glUniform1f(diffuse_intensity, 0.8f);
+    }
 }
 

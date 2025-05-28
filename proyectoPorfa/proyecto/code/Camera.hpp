@@ -7,7 +7,7 @@
 
 #include <glm.hpp>                          // vec3, vec4, ivec4, mat4
 #include <gtc/matrix_transform.hpp>         // translate, rotate, scale, perspective
-#include <gtc/type_ptr.hpp>                 // value_ptr
+
 
 namespace udit
 {
@@ -26,7 +26,8 @@ namespace udit
         float    ratio;
 
         Point    location;
-        Point    target;
+        float    rotation_x;
+        float    rotation_y;
 
         Matrix44 projection_matrix;
 
@@ -49,13 +50,14 @@ namespace udit
 
     public:
 
-        float         get_fov() const { return fov; }
-        float         get_near_z() const { return near_z; }
-        float         get_far_z() const { return far_z; }
-        float         get_ratio() const { return ratio; }
+        float         get_fov()     const { return fov; }
+        float         get_near_z()  const { return near_z; }
+        float         get_far_z()   const { return far_z; }
+        float         get_ratio()   const { return ratio; }
+        float		  getRotation_x() const { return    rotation_x; }
+        float		  getRotation_y() const { return    rotation_y; }
 
         const Point& get_location() const { return location; }
-        const Point& get_target() const { return target; }
 
     public:
 
@@ -65,8 +67,9 @@ namespace udit
         void set_ratio(float new_ratio) { ratio = new_ratio;  calculate_projection_matrix(); }
 
         void set_location(float x, float y, float z) { location[0] = x; location[1] = y; location[2] = z; }
-        void set_target(float x, float y, float z) { target[0] = x; target[1] = y; target[2] = z; }
-
+        void setRotation_x(float newRotation_x) { rotation_x = newRotation_x; calculate_projection_matrix(); }
+        void setRotation_y(float newRotation_y) { rotation_y = newRotation_y; calculate_projection_matrix(); }
+        
         void reset(float new_fov, float new_near_z, float new_far_z, float new_ratio)
         {
             set_fov(new_fov);
@@ -74,7 +77,8 @@ namespace udit
             set_far_z(new_far_z);
             set_ratio(new_ratio);
             set_location(0.f, 0.f, 0.f);
-            set_target(0.f, 0.f, -1.f);
+            setRotation_x(0.f);
+            setRotation_y(0.f);
             calculate_projection_matrix();
         }
 
@@ -83,12 +87,15 @@ namespace udit
         void move(const glm::vec3& translation)
         {
             location += glm::vec4(translation, 1.f);
-            target += glm::vec4(translation, 1.f);
         }
 
-        void rotate(const glm::mat4& rotation)
+        void rotate(float deltaRotation_x, float deltaRotation_y)
         {
-            target = location + rotation * (target - location);
+            rotation_x += deltaRotation_x;
+            rotation_y += deltaRotation_y;
+
+            if (rotation_x > glm::radians(89.f)) rotation_x = glm::radians(89.f);
+            if (rotation_x < glm::radians(-89.f)) rotation_x = glm::radians(-89.f);
         }
 
     public:
@@ -100,12 +107,17 @@ namespace udit
 
         glm::mat4 get_transform_matrix_inverse() const
         {
-            return glm::lookAt
+            glm::vec3 direction
             (
-                glm::vec3(location[0], location[1], location[2]),
-                glm::vec3(target[0], target[1], target[2]),
-                glm::vec3(0.0f, 1.0f, 0.0f)
+                cos(rotation_x) * sin(rotation_y),
+                sin(rotation_x),
+                cos(rotation_x) * cos(rotation_y)
             );
+            
+            glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.f, 1.f, 0.f), direction));
+            glm::vec3 up = glm::normalize(glm::cross(direction, right));
+
+            return glm::lookAt(glm::vec3(location), glm::vec3(location) + direction, up);
         }
 
     private:

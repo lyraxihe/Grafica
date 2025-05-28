@@ -42,6 +42,7 @@
 
             GLint   model_view_matrix_id;
             GLint   projection_matrix_id;
+            GLint       normal_matrix_id;
 
             Object object_1;
             Object object_2;
@@ -67,9 +68,10 @@
 
             GLuint program_id;
 
+        public:
+            bool keys[4] = { false, false, false, false };
 
         public:
-
             Scene(int width, int height);
            ~Scene();
 
@@ -78,7 +80,6 @@
 
             void   on_drag     (int pointer_x, int pointer_y);
             void   on_click    (int pointer_x, int pointer_y, bool down);
-            void   move_camera (char key);
 
 
 
@@ -87,6 +88,11 @@
             GLuint compile_shaders        ();
             void   show_linkage_error     (GLuint program_id);
             void   show_compilation_error (GLuint  shader_id);
+        
+
+            void   configure_material(GLuint program_id);
+            void   configure_light(GLuint program_id);
+
         };
 
     }
