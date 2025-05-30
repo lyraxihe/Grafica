@@ -57,7 +57,7 @@ namespace PracticaKatya
         "    fragment_color = vec4(finalColor, 1.0);"
         "}";
 
-    const string Terrain::texture_path = "../../../shared/assets/map_02.jpg";
+    const string Terrain::texture_path = "../../../shared/assets/heightmap.jpg";
 
     Terrain::Terrain(float width, float depth, unsigned x_slices, unsigned z_slices)
     :
@@ -75,8 +75,8 @@ namespace PracticaKatya
 
         float x_step = width / float(x_slices);
         float z_step = depth / float(z_slices);
-        float u_step = 1.f / float(x_slices);
-        float v_step = 1.f / float(z_slices);
+        float u_step = .6f / float(x_slices);
+        float v_step = .6f / float(z_slices);
 
         int   coordinate_index = 0;
 
@@ -152,6 +152,7 @@ namespace PracticaKatya
     void Terrain::render(glm::mat4 view_matrix, glm::vec3 translation, glm::vec3 rotation, float scaleFactor)
     {
         shader.use();
+
         glm::mat4 model_matrix = glm::mat4(1);
         model_matrix = glm::translate(model_matrix, translation); //glm::vec3(0.f, 0.f, -11.f)
         model_matrix = glm::rotate(model_matrix, .1f, rotation); //glm::vec3(1.f, 0.f, 0.f)

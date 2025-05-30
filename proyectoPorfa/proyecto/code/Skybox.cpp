@@ -17,42 +17,53 @@ namespace PracticaKatya
 
     const GLfloat Skybox::coordinates[] =
     {
-        -1.0f, +1.0f, -1.0f,
+        // Back face
+        -1.0f,  1.0f, -1.0f,
         -1.0f, -1.0f, -1.0f,
-        +1.0f, -1.0f, -1.0f,
-        +1.0f, -1.0f, -1.0f,
-        +1.0f, +1.0f, -1.0f,
-        -1.0f, +1.0f, -1.0f,
-        -1.0f, -1.0f, +1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        // Left face
+        -1.0f, -1.0f,  1.0f,
         -1.0f, -1.0f, -1.0f,
-        -1.0f, +1.0f, -1.0f,
-        -1.0f, +1.0f, -1.0f,
-        -1.0f, +1.0f, +1.0f,
-        -1.0f, -1.0f, +1.0f,
-        +1.0f, -1.0f, -1.0f,
-        +1.0f, -1.0f, +1.0f,
-        +1.0f, +1.0f, +1.0f,
-        +1.0f, +1.0f, +1.0f,
-        +1.0f, +1.0f, -1.0f,
-        +1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, +1.0f,
-        -1.0f, +1.0f, +1.0f,
-        +1.0f, +1.0f, +1.0f,
-        +1.0f, +1.0f, +1.0f,
-        +1.0f, -1.0f, +1.0f,
-        -1.0f, -1.0f, +1.0f,
-        -1.0f, +1.0f, -1.0f,
-        +1.0f, +1.0f, -1.0f,
-        +1.0f, +1.0f, +1.0f,
-        +1.0f, +1.0f, +1.0f,
-        -1.0f, +1.0f, +1.0f,
-        -1.0f, +1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, +1.0f,
-        +1.0f, -1.0f, -1.0f,
-        +1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, +1.0f,
-        +1.0f, -1.0f, +1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        // Right face
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+         // Front face
+         -1.0f, -1.0f,  1.0f,
+         -1.0f,  1.0f,  1.0f,
+          1.0f,  1.0f,  1.0f,
+          1.0f,  1.0f,  1.0f,
+          1.0f, -1.0f,  1.0f,
+         -1.0f, -1.0f,  1.0f,
+
+         // Top face
+         -1.0f,  1.0f, -1.0f,
+          1.0f,  1.0f, -1.0f,
+          1.0f,  1.0f,  1.0f,
+          1.0f,  1.0f,  1.0f,
+         -1.0f,  1.0f,  1.0f,
+         -1.0f,  1.0f, -1.0f,
+
+         // Bottom face
+         -1.0f, -1.0f, -1.0f,
+         -1.0f, -1.0f,  1.0f,
+          1.0f, -1.0f, -1.0f,
+          1.0f, -1.0f, -1.0f,
+         -1.0f, -1.0f,  1.0f,
+          1.0f, -1.0f,  1.0f,
     };
 
     const std::string Skybox::vertex_shader_code =
@@ -68,7 +79,7 @@ namespace PracticaKatya
         ""
         "void main()"
         "{"
-        "   texture_coordinates = vec3(vertex_coordinates.x, -vertex_coordinates.y, vertex_coordinates.z);"
+        "   texture_coordinates = vec3(vertex_coordinates.x, vertex_coordinates.y, vertex_coordinates.z);"
         "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
         "}";
 

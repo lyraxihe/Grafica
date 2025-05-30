@@ -46,6 +46,7 @@ namespace PracticaKatya
         GLint  projection_matrix_id;
         GLuint texture_id;
         bool   there_is_texture;
+        GLint number_of_indices;
 
     public:
 

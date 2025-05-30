@@ -22,11 +22,14 @@ namespace PracticaKatya
         skybox("../../../shared/assets/sky-cube-map-"), 
         flor("../../../shared/assets/flor.obj", "../../../shared/assets/florT.jpeg"), 
         conejo("../../../shared/assets/stanford-bunny.obj", "../../../shared/assets/florT.jpeg"),
-        terrain(10.f, 10.f, 800, 800),
+        bag("../../../shared/assets/bag.obj", "../../../shared/assets/bagcolor1.png"),
+        terrain(10.f, 10.f, 800.f, 800.f),
         angle(0)
     {
         // Se establece la configuración básica:
-       // glEnable     (GL_CULL_FACE);
+       //glEnable     (GL_CULL_FACE);
+        glDisable(GL_CULL_FACE);
+
         glEnable(GL_DEPTH_TEST);
         glClearColor(.1f, .1f, .1f, 1.f);
 
@@ -62,7 +65,7 @@ namespace PracticaKatya
 
         camera.move(movement);
 
-        flor.update();
+        //flor.update();
         //conejo.update();
     }
 
@@ -77,8 +80,8 @@ namespace PracticaKatya
         glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
 
         // se renderiza la flor  
- //                                             translate                         rotation               scalation 
-        flor.render(view_matrix,        glm::vec3(0.f, -1.f, 4.5f),       glm::vec3(0.f, 1.f,0.f),          1.f        );
+ //                                             translate               angle                rotation               scalation 
+        flor.render(view_matrix,        glm::vec3(0.f, -1.f, 4.5f),     angle,       glm::vec3(0.f, 1.f,0.f),          1.f        );
 
 
         // se renderiza el conejo con transparencia
@@ -87,12 +90,15 @@ namespace PracticaKatya
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //                                       translate                         rotation              scalation 
-        conejo.render(view_matrix,       glm::vec3(0.f, 0.f, 2.f),        glm::vec3(0.f, 1.f, 0.f),        0.6f       );
+        //                                             translate               angle                rotation               scalation 
+        conejo.render(view_matrix,       glm::vec3(0.f, 0.f, 2.f),              1.f,        glm::vec3(0.f, 1.f, 0.f),        0.6f       );
 
         // Se deshabilita la mezcla con el fondo y se restaura escritura en el Z-Buffer:
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
+
+        //                                             translate               angle                rotation               scalation 
+        bag.render(view_matrix,         glm::vec3(1.f, 0.f, 1.f),                1.f,        glm::vec3(0.f, 1.f, 0.f),       0.2f       );
 
         //                                       translate                         rotation              scalation 
         terrain.render(view_matrix,      glm::vec3(0.f, -4.f, 3.f),      glm::vec3(1.f, 0.f, 0.f),         1.f       );
@@ -108,6 +114,7 @@ namespace PracticaKatya
         flor.resize     (width_, height_);
         conejo.resize   (width_, height_);
         terrain.resize  (width_, height_);
+        bag.resize      (width_, height_);
 
         glViewport(0, 0, width_, height_);
     }

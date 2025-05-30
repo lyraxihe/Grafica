@@ -32,6 +32,7 @@
 
             Object flor;
             Object conejo;
+            Object bag;
 
             float   angle;
 

@@ -51,8 +51,8 @@ namespace PracticaKatya
 
     Object::Object(const std::string mesh_file_path, const std::string texture_path)
     :
-        shader(vertex_shader_code, fragment_shader_code),
-        angle(0)
+        shader(vertex_shader_code, fragment_shader_code)
+        //angle(0)
     {
 
         // Crea la textura y la malla
@@ -80,7 +80,7 @@ namespace PracticaKatya
 
     void Object::update()
     {
-        angle += 0.01f;
+        //angle += 0.01f;
     }
 
     void Object::resize(int width_, int height_)
@@ -96,7 +96,7 @@ namespace PracticaKatya
         glViewport(0, 0, width_, height_);
     }
 
-    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, glm::vec3 rotation, float scaleFactor)
+    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor)
     {
          shader.use();
 

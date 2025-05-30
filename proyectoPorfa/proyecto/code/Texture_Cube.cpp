@@ -19,7 +19,7 @@ namespace PracticaKatya
 
         for (size_t texture_index = 0; texture_index < 6; texture_index++)
         {
-            texture_sides[texture_index] = load_image(texture_base_path + char('0' + texture_index) + ".png");
+            texture_sides[texture_index] = load_image(texture_base_path + char('0' + texture_index) + ".jpg");
 
             if (!texture_sides[texture_index])
             {
