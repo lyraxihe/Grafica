@@ -6,7 +6,7 @@
 #include <SOIL2.h>
 #include "Texture_Cube.hpp"
 
-namespace udit
+namespace PracticaKatya
 {
 
     Texture_Cube::Texture_Cube(const std::string& texture_base_path)

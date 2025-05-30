@@ -144,6 +144,7 @@
     <ClCompile Include="..\..\code\main.cpp" />
     <ClCompile Include="..\..\code\Object.cpp" />
     <ClCompile Include="..\..\code\Scene.cpp" />
+    <ClCompile Include="..\..\code\Shader.cpp" />
     <ClCompile Include="..\..\code\Skybox.cpp" />
     <ClCompile Include="..\..\code\Terrain.cpp" />
     <ClCompile Include="..\..\code\Texture_Cube.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="..\..\code\Color_Buffer.hpp" />
     <ClInclude Include="..\..\code\Object.hpp" />
     <ClInclude Include="..\..\code\Scene.hpp" />
+    <ClInclude Include="..\..\code\Shader.hpp" />
     <ClInclude Include="..\..\code\Skybox.hpp" />
     <ClInclude Include="..\..\code\Terrain.hpp" />
     <ClInclude Include="..\..\code\Texture_Cube.hpp" />

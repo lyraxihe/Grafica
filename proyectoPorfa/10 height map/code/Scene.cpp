@@ -55,7 +55,7 @@ namespace udit
 
     Scene::Scene(int width, int height)
     :
-        terrain("../../../shared/assets/height-map.png", 10.f, 10.f, 50, 50),
+        terrain(10.f, 10.f, 50, 50),
         angle  (0.f)
     {
         // Se compilan y se activan los shaders:

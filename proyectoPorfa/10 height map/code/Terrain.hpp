@@ -29,19 +29,16 @@
             GLuint  vbo_ids[VBO_COUNT];
 
             GLsizei number_of_vertices;
-            GLuint texture_id;
-            bool there_is_texture;
 
         public:
 
-            Terrain(const std::string texture_path, float width, float depth, unsigned x_slices, unsigned z_slices);
+            Terrain(float width, float depth, unsigned x_slices, unsigned z_slices);
            ~Terrain();
 
         public:
 
             void render ();
-            void   load_mesh(const std::string& mesh_file_path);
-            GLuint create_texture_2d(const std::string& texture_path);
+
         };
 
     }

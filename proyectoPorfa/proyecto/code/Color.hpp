@@ -6,9 +6,9 @@
 
 #include <cstdint>
 
-namespace udit
+namespace PracticaKatya
 {
-
+    using Monochrome8 = uint8_t;
     union Rgba8888
     {
         enum { RED, GREEN, BLUE, ALPHA };

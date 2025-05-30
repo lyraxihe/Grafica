@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace udit
+namespace PracticaKatya
 {
 
     template< typename COLOR >

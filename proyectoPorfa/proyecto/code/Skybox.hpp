@@ -9,8 +9,9 @@
 #include <memory>
 #include "Camera.hpp"
 #include "Texture_Cube.hpp"
+#include "Shader.hpp"
 
-namespace udit
+namespace PracticaKatya
 {
 
     class Skybox
@@ -31,6 +32,8 @@ namespace udit
 
         Texture_Cube texture_cube;
 
+        Shader shader;
+
     public:
 
         Skybox(const std::string& texture_path);
@@ -39,12 +42,6 @@ namespace udit
     public:
 
         void render(const Camera& camera);
-
-    private:
-
-        GLuint compile_shaders();
-        void   show_compilation_error(GLuint  shader_id);
-        void   show_linkage_error(GLuint program_id);
 
     };
 

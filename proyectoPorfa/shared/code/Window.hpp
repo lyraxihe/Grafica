@@ -8,7 +8,7 @@
 #include <string>
 #include <utility>
 
-namespace udit
+namespace PracticaKatya
 {
     
     class Window

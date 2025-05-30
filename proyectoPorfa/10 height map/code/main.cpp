@@ -6,7 +6,7 @@
 #include <Window.hpp>
 
 using udit::Scene;
-using udit::Window;
+using PracticaKatya::Window;
 
 int main (int , char * [])
 {

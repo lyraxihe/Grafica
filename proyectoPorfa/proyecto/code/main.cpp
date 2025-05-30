@@ -5,8 +5,8 @@
 #include "Scene.hpp"
 #include <Window.hpp>
 
-using udit::Scene;
-using udit::Window;
+using PracticaKatya::Scene;
+using PracticaKatya::Window;
 
 int main (int , char * [])
 {

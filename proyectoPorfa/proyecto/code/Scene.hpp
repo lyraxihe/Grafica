@@ -13,7 +13,7 @@
     #include "Skybox.hpp"  
     #include "Terrain.hpp"
 
-    namespace udit
+    namespace PracticaKatya
     {
 
         using glm::vec3;
@@ -30,22 +30,8 @@
                 VBO_COUNT
             };
 
-
-
-            static const std::string   vertex_shader_code;
-            static const std::string   fragment_shader_code;
-
-            GLuint  vbo_ids[VBO_COUNT];
-            GLuint  vao_id;
-
-            GLsizei number_of_indices;
-
-            GLint   model_view_matrix_id;
-            GLint   projection_matrix_id;
-            GLint       normal_matrix_id;
-
-            Object object_1;
-            Object object_2;
+            Object flor;
+            Object conejo;
 
             float   angle;
 
@@ -66,7 +52,6 @@
             int    last_pointer_x;
             int    last_pointer_y;
 
-            GLuint program_id;
 
         public:
             bool keys[4] = { false, false, false, false };
@@ -84,14 +69,9 @@
 
 
          private:
-            void   resize                 (int width, int height);
-            GLuint compile_shaders        ();
-            void   show_linkage_error     (GLuint program_id);
-            void   show_compilation_error (GLuint  shader_id);
-        
-
-            void   configure_material(GLuint program_id);
-            void   configure_light(GLuint program_id);
+            void   resize             (int width_, int height_);
+            void   configure_material (GLuint program_id);
+            void   configure_light    (GLuint program_id);
 
         };
 

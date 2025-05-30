@@ -8,18 +8,66 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <SOIL2.h>
+#include <glad/glad.h>
+#include <gtc/type_ptr.hpp>
 
 using namespace std;
 using namespace glm;
 
-namespace udit
+namespace PracticaKatya
 {
 
+    const string Object::vertex_shader_code =
+
+        "#version 330\n"
+        ""
+        "uniform mat4 model_view_matrix;"
+        "uniform mat4 projection_matrix;"
+        ""
+        "layout (location = 0) in vec3 vertex_coordinates;"
+        "layout (location = 1) in vec2 vertex_texture_uv;"
+        ""
+        "out vec2 texture_uv;"
+        ""
+        "void main()"
+        "{"
+        "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
+        "   texture_uv  = vertex_texture_uv;"
+        "}";
+
+    const string Object::fragment_shader_code =
+
+        "#version 330\n"
+        ""
+        "uniform sampler2D sampler;"
+        ""
+        "in  vec2 texture_uv;"
+        "out vec4 fragment_color;"
+        ""
+        "void main()"
+        "{"
+        "   fragment_color = vec4(texture (sampler, texture_uv).rgb, 0.5);"
+        "}";
+
     Object::Object(const std::string mesh_file_path, const std::string texture_path)
+    :
+        shader(vertex_shader_code, fragment_shader_code),
+        angle(0)
     {
+
+        // Crea la textura y la malla
         texture_id = create_texture_2d(texture_path);
         there_is_texture = texture_id > 0;
         load_mesh(mesh_file_path);
+
+        // Configura el shader
+        shader_program_id = shader.getID();
+        glUseProgram(shader_program_id);
+
+        model_view_matrix_id = glGetUniformLocation(shader_program_id, "model_view_matrix");
+        projection_matrix_id = glGetUniformLocation(shader_program_id, "projection_matrix");
+
+
     }
 
     Object::~Object()
@@ -30,19 +78,46 @@ namespace udit
             glDeleteTextures(1, &texture_id);
     }
 
-    void Object::render()
+    void Object::update()
     {
+        angle += 0.01f;
+    }
+
+    void Object::resize(int width_, int height_)
+    {
+        // Activa el shader de este objeto
+        glUseProgram(shader_program_id);
+
+        // Calcula la proyección y actualiza el uniforme
+        glm::mat4 projection_matrix = glm::perspective(20.f, GLfloat(width_) / height_, 1.f, 5000.f);
+        glUniformMatrix4fv(projection_matrix_id, 1, GL_FALSE, glm::value_ptr(projection_matrix));
+
+        // Establece el viewport (estado global, no depende del shader)
+        glViewport(0, 0, width_, height_);
+    }
+
+    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, glm::vec3 rotation, float scaleFactor)
+    {
+         shader.use();
+
+         // Construir la matriz modelo (modifícala según lo que necesites)
+         glm::mat4 model_matrix = glm::mat4(1);
+         model_matrix = glm::translate(model_matrix, translation);
+         model_matrix = glm::rotate(model_matrix, angle, rotation);
+         model_matrix = glm::scale(model_matrix, glm::vec3(scaleFactor));
+
+         glm::mat4 model_view_matrix = view_matrix * model_matrix;
+         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
 
          // Vincula la textura a la unidad 0
          glActiveTexture(GL_TEXTURE0);
          glBindTexture(GL_TEXTURE_2D, texture_id);
 
-         // Se dibuja la malla:
+         // Enlaza el VAO y dibuja
          glBindVertexArray(vao_id);
          glDrawElements(GL_TRIANGLES, number_of_indices, GL_UNSIGNED_SHORT, 0);
          glBindVertexArray(0);
     }
-
 
     void Object::load_mesh(const std::string& mesh_file_path)
     {

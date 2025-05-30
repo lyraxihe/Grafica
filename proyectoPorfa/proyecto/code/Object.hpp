@@ -4,9 +4,10 @@
 #include <glad/glad.h>
 #include <glm.hpp>
 #include <string>
+#include "Shader.hpp"
 
 
-namespace udit
+namespace PracticaKatya
 {
 
     class Object
@@ -29,12 +30,28 @@ namespace udit
         GLuint texture_id;
         bool there_is_texture;
 
+        static const std::string   vertex_shader_code;
+        static const std::string fragment_shader_code;
+
+        GLuint       shader_program_id;
+
+        GLint        model_view_matrix_id;
+        GLint        projection_matrix_id;
+
+        Shader shader;
+        float  angle;
+
     public:
 
         Object (const std::string mesh_file_path, const std::string texture_path);
         ~Object();
 
-        void   render            ();
+        void render(glm::mat4 view_matrix, glm::vec3 translation, glm::vec3 rotation, float scaleFactor);
+        void update();
+        void resize(int width, int height);
+
+    private:
+
         void   load_mesh         (const std::string& mesh_file_path);
         GLuint create_texture_2d (const std::string& texture_path);
     };

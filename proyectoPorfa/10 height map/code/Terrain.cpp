@@ -14,27 +14,8 @@ using half_float::half;
 namespace udit
 {
 
-    Terrain::Terrain(const std::string texture_path, float width, float depth, unsigned x_slices, unsigned z_slices)
+    Terrain::Terrain(float width, float depth, unsigned x_slices, unsigned z_slices)
     {
-
-        GLuint program_id = compile_shaders(vertex_shader_code, fragment_shader_code);
-
-        glUseProgram(program_id);
-
-        model_view_matrix_id = glGetUniformLocation(program_id, "model_view_matrix");
-        projection_matrix_id = glGetUniformLocation(program_id, "projection_matrix");
-
-        // Se establece la altura máxima del height map en el vertex shader:
-
-        glUniform1f(glGetUniformLocation(program_id, "max_height"), 5.f);
-
-        // Se carga la textura y se envía a la GPU:
-
-        texture_id = create_texture_2d< Monochrome8 >(texture_path);
-
-        there_is_texture = texture_id > 0;
-
-
         number_of_vertices = x_slices * z_slices;
 
         vector< half > coordinates(number_of_vertices * 2);     // Sólo es necesario guardar las coordenadas X y Z
@@ -107,56 +88,4 @@ namespace udit
         glDrawArrays (GL_LINE_STRIP, 0, number_of_vertices);
     }
 
-    GLuint Terrain::create_texture_2d(const std::string& texture_path)
-    {
-        // Cargar la imagen con SOIL_load_image
-        int image_width = 0;
-        int image_height = 0;
-        int image_channels = 0;
-
-        uint8_t* loaded_pixels = SOIL_load_image
-        (
-            texture_path.c_str(),
-            &image_width,
-            &image_height,
-            &image_channels,
-            SOIL_LOAD_RGBA
-        );
-
-        if (loaded_pixels)
-        {
-            // Habilita y genera la textura en OpenGL
-            GLuint texture_id;
-            glEnable(GL_TEXTURE_2D);
-            glGenTextures(1, &texture_id);
-            glBindTexture(GL_TEXTURE_2D, texture_id);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            // Se envían los datos de la imagen a la GPU
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RGBA,
-                image_width,
-                image_height,
-                0,
-                GL_RGBA,
-                GL_UNSIGNED_BYTE,
-                loaded_pixels
-            );
-
-            glGenerateMipmap(GL_TEXTURE_2D);
-
-            // Liberamos la imagen cargada en memoria
-            SOIL_free_image_data(loaded_pixels);
-
-            return texture_id;
-        }
-
-        return static_cast<GLuint>(-1);
-    }
 }

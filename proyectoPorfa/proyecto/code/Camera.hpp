@@ -9,7 +9,7 @@
 #include <gtc/matrix_transform.hpp>         // translate, rotate, scale, perspective
 
 
-namespace udit
+namespace PracticaKatya
 {
 
     class Camera

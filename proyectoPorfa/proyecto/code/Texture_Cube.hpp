@@ -11,7 +11,7 @@
 #include <Color.hpp>
 #include <Color_Buffer.hpp>
 
-namespace udit
+namespace PracticaKatya
 {
 
     class Texture_Cube

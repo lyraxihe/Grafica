@@ -9,7 +9,7 @@
 #include <SDL_opengl.h>
 #include "Window.hpp"
 
-namespace udit
+namespace PracticaKatya
 {
  
     Window::Window
