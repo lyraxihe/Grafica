@@ -22,17 +22,10 @@
         {
         private:
 
-            enum
-            {
-                COORDINATES_VBO,
-                TEXCOORDS_VBO,
-                INDICES_EBO,
-                VBO_COUNT
-            };
-
-            Object flor;
-            Object conejo;
-            Object bag;
+            Object flor_0;
+            Object flor_1;
+            Object flor_2;
+            Object flor_3;
 
             float   angle;
 
@@ -56,6 +49,14 @@
 
         public:
             bool keys[4] = { false, false, false, false };
+            struct LightBlockData
+            {
+                glm::vec4 lightPosition;
+                glm::vec3 lightColor;
+                float ambientIntensity;
+                float diffuseIntensity;
+            };
+
 
         public:
             Scene(int width, int height);

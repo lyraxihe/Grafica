@@ -79,8 +79,11 @@ namespace PracticaKatya
         ""
         "void main()"
         "{"
-        "   texture_coordinates = vec3(vertex_coordinates.x, vertex_coordinates.y, vertex_coordinates.z);"
-        "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
+        "   texture_coordinates = vertex_coordinates;"
+        "   vec4 pos = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
+        "   gl_Position = pos.xyww;"
+        //"   texture_coordinates = vec3(vertex_coordinates.x, vertex_coordinates.y, vertex_coordinates.z);"
+        //"   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
         "}";
 
     const std::string Skybox::fragment_shader_code =
@@ -143,14 +146,19 @@ namespace PracticaKatya
     {
         shader.use();
 
+        glDepthFunc(GL_LEQUAL);
+        glDepthMask(GL_FALSE);
+
         texture_cube.bind();
 
         const glm::mat4& projection_matrix = camera.get_projection_matrix();
 
-        // Factor de escala (ajusta este valor según lo que necesites)
         float scaleFactor = 50.0f;
         glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scaleFactor));
-        glm::mat4 scaled_model_view = camera.get_transform_matrix_inverse() * scaleMatrix;
+        
+        glm::mat4 view = camera.get_transform_matrix_inverse();
+        glm::mat4 viewNoTrans = glm::mat4(glm::mat3(view));
+        glm::mat4 scaled_model_view = viewNoTrans * scaleMatrix;
 
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(scaled_model_view));
         glUniformMatrix4fv(projection_matrix_id, 1, GL_FALSE, glm::value_ptr(projection_matrix));
@@ -160,11 +168,12 @@ namespace PracticaKatya
         glBindVertexArray(vao_id);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glDepthMask(GL_TRUE);
-
         // Restablece el estado: desvincula VAO, shader y textura del cubemap
-        glBindVertexArray(1);
-        glUseProgram(1);
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+
+        glBindVertexArray(0);
+        glUseProgram(0);
     }
 
 }

@@ -20,10 +20,11 @@ namespace PracticaKatya
     Scene::Scene(int width, int height)
     :
         skybox("../../../shared/assets/sky-cube-map-"), 
-        flor("../../../shared/assets/flor.obj", "../../../shared/assets/florT.jpeg"), 
-        conejo("../../../shared/assets/stanford-bunny.obj", "../../../shared/assets/florT.jpeg"),
-        bag("../../../shared/assets/bag.obj", "../../../shared/assets/bagcolor1.png"),
-        terrain(10.f, 10.f, 800.f, 800.f),
+        flor_0("../../../shared/assets/flor_0.obj", "../../../shared/assets/flor_0T.jpeg"), 
+        flor_1("../../../shared/assets/flor_1.obj", "../../../shared/assets/flor_1T.png"),
+        flor_2("../../../shared/assets/flor_2.obj", "../../../shared/assets/flor_2T.png"),
+        flor_3("../../../shared/assets/flor_3.obj", "../../../shared/assets/flor_3T.png"),
+        terrain(10.f, 10.f, 800, 800),
         angle(0)
     {
         // Se establece la configuración básica:
@@ -35,6 +36,22 @@ namespace PracticaKatya
 
         resize(width, height);
         pointer_pressed = false;
+
+        //configuración de luces
+        GLuint uboLights;
+        glGenBuffers(1, &uboLights);
+        glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
+        LightBlockData lightData;
+        lightData.lightPosition = glm::vec4(1.f, 10.f, 4.f, 1.f);
+        lightData.lightColor = glm::vec3(1.f, 1.f, 1.f);
+        lightData.ambientIntensity = 0.4f;
+        lightData.diffuseIntensity = 0.8f;
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlockData), &lightData, GL_STATIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+        // Vincula el UBO al binding point 0
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboLights);
+
     }
 
     Scene::~Scene()
@@ -79,29 +96,39 @@ namespace PracticaKatya
         //se crea el view_matrix teniendo en cuenta la vista de la cámara
         glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
 
-        // se renderiza la flor  
- //                                             translate               angle                rotation               scalation 
-        flor.render(view_matrix,        glm::vec3(0.f, -1.f, 4.5f),     angle,       glm::vec3(0.f, 1.f,0.f),          1.f        );
-
-
         // se renderiza el conejo con transparencia
         // Se habilita la mezcla con el color de fondo usando el canal alpha y se deshabilita la escritura en el Z-Buffer:
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //                                             translate               angle                rotation               scalation 
-        conejo.render(view_matrix,       glm::vec3(0.f, 0.f, 2.f),              1.f,        glm::vec3(0.f, 1.f, 0.f),        0.6f       );
+        // SE RENDERIZA EL OBJ TRANSPARENTE
 
         // Se deshabilita la mezcla con el fondo y se restaura escritura en el Z-Buffer:
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
 
-        //                                             translate               angle                rotation               scalation 
-        bag.render(view_matrix,         glm::vec3(1.f, 0.f, 1.f),                1.f,        glm::vec3(0.f, 1.f, 0.f),       0.2f       );
 
-        //                                       translate                         rotation              scalation 
-        terrain.render(view_matrix,      glm::vec3(0.f, -4.f, 3.f),      glm::vec3(1.f, 0.f, 0.f),         1.f       );
+
+
+
+
+
+        // se renderiza la flor  
+        //                                             translate               angle                rotation               scalation 
+        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f       );
+
+        //                                             translate               angle                rotation               scalation 
+        flor_1.render(view_matrix,         glm::vec3(-1.f, -1.7f, 4.5f),       angle,        glm::vec3(0.f, 1.f, 0.f),         1.f       );
+
+        //                                             translate               angle                rotation               scalation 
+        flor_2.render(view_matrix,         glm::vec3(2.f, -1.f, 1.f),          angle,        glm::vec3(0.f, 1.f, 0.f),         1.f       );
+
+        //                                             translate               angle                rotation               scalation 
+        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 6.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f       );
+
+        //                                             translate              rotation              scalation 
+        terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 3.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );
     }
 
     void Scene::resize(int width_, int height_)
@@ -111,10 +138,11 @@ namespace PracticaKatya
 
         camera.set_ratio(float(width_) / height_);
 
-        flor.resize     (width_, height_);
-        conejo.resize   (width_, height_);
+        flor_0.resize   (width_, height_);
+        flor_1.resize   (width_, height_);
+        flor_2.resize   (width_, height_);
+        flor_3.resize   (width_, height_);
         terrain.resize  (width_, height_);
-        bag.resize      (width_, height_);
 
         glViewport(0, 0, width_, height_);
     }

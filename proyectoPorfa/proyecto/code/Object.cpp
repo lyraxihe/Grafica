@@ -21,36 +21,68 @@ namespace PracticaKatya
 
         "#version 330\n"
         ""
+        "layout(std140) uniform LightBlock"
+        "{"
+        "    vec4 lightPosition;"
+        "    vec3 lightColor;"
+        "    float ambientIntensity;"
+        "    float diffuseIntensity;"
+        "};"
+        ""
         "uniform mat4 model_view_matrix;"
         "uniform mat4 projection_matrix;"
+        "uniform mat3 normal_matrix;"
         ""
         "layout (location = 0) in vec3 vertex_coordinates;"
         "layout (location = 1) in vec2 vertex_texture_uv;"
+        "layout (location = 2) in vec3 vertex_normal;"
         ""
         "out vec2 texture_uv;"
+        "out float lightFactor;"
         ""
         "void main()"
         "{"
-        "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
-        "   texture_uv  = vertex_texture_uv;"
+        "vec4 worldPosition = model_view_matrix * vec4(vertex_coordinates, 1.0);"
+        "gl_Position = projection_matrix * worldPosition;"
+        " texture_uv = vertex_texture_uv;"
+        ""
+        "vec3 normal = normalize(normal_matrix * vertex_normal);"
+        ""
+        "vec3 lightDir = normalize(lightPosition.xyz - worldPosition.xyz);"
+        "float diff = max(dot(normal, lightDir), 0.0);"
+        "lightFactor = ambientIntensity + diffuseIntensity * diff;"
         "}";
+
+    //        "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
+   // "   texture_uv  = vertex_texture_uv;"
+
 
     const string Object::fragment_shader_code =
 
         "#version 330\n"
         ""
+        "layout(std140) uniform LightBlock"
+        "{"
+        "    vec4 lightPosition;"
+        "    vec3 lightColor;"
+        "    float ambientIntensity;"
+        "    float diffuseIntensity;"
+        "};"
+        ""
         "uniform sampler2D sampler;"
         ""
         "in  vec2 texture_uv;"
+        "in float lightFactor;"
         "out vec4 fragment_color;"
         ""
         "void main()"
         "{"
-        "   fragment_color = vec4(texture (sampler, texture_uv).rgb, 0.5);"
+        "   vec4 tex_color = texture(sampler, texture_uv);"
+        "   fragment_color = vec4(tex_color.rgb * lightFactor * lightColor, tex_color.a);"
         "}";
-
+    //        "   fragment_color = vec4(texture (sampler, texture_uv).rgb, 0.5);"
     Object::Object(const std::string mesh_file_path, const std::string texture_path)
-    :
+        :
         shader(vertex_shader_code, fragment_shader_code)
         //angle(0)
     {
@@ -62,12 +94,17 @@ namespace PracticaKatya
 
         // Configura el shader
         shader_program_id = shader.getID();
-        glUseProgram(shader_program_id);
+        shader.use();
 
         model_view_matrix_id = glGetUniformLocation(shader_program_id, "model_view_matrix");
         projection_matrix_id = glGetUniformLocation(shader_program_id, "projection_matrix");
 
-
+        // Vincula el bloque 'LightBlock' a binding point 0
+        GLuint lightBlockIndex = glGetUniformBlockIndex(shader_program_id, "LightBlock");
+        if (lightBlockIndex != GL_INVALID_INDEX)
+        {
+            glUniformBlockBinding(shader_program_id, lightBlockIndex, 0); // 0 es el binding point elegido
+        }
     }
 
     Object::~Object()
@@ -98,25 +135,28 @@ namespace PracticaKatya
 
     void Object::render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor)
     {
-         shader.use();
+        shader.use();
 
-         // Construir la matriz modelo (modifícala según lo que necesites)
-         glm::mat4 model_matrix = glm::mat4(1);
-         model_matrix = glm::translate(model_matrix, translation);
-         model_matrix = glm::rotate(model_matrix, angle, rotation);
-         model_matrix = glm::scale(model_matrix, glm::vec3(scaleFactor));
+        // Construir la matriz modelo (modifícala según lo que necesites)
+        glm::mat4 model_matrix = glm::mat4(1);
+        model_matrix = glm::translate(model_matrix, translation);
+        model_matrix = glm::rotate(model_matrix, angle, rotation);
+        model_matrix = glm::scale(model_matrix, glm::vec3(scaleFactor));
 
-         glm::mat4 model_view_matrix = view_matrix * model_matrix;
-         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
+        glm::mat4 model_view_matrix = view_matrix * model_matrix;
+        glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
 
-         // Vincula la textura a la unidad 0
-         glActiveTexture(GL_TEXTURE0);
-         glBindTexture(GL_TEXTURE_2D, texture_id);
+        // Calcula la normal_matrix: se asume una conversión 3x3 (en caso de escalas no uniformes, se debe ajustar)
+        glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_view_matrix)));
+        glUniformMatrix3fv(glGetUniformLocation(shader_program_id, "normal_matrix"), 1, GL_FALSE, glm::value_ptr(normal_matrix));
+        // Vincula la textura a la unidad 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
 
-         // Enlaza el VAO y dibuja
-         glBindVertexArray(vao_id);
-         glDrawElements(GL_TRIANGLES, number_of_indices, GL_UNSIGNED_SHORT, 0);
-         glBindVertexArray(0);
+        // Enlaza el VAO y dibuja
+        glBindVertexArray(vao_id);
+        glDrawElements(GL_TRIANGLES, number_of_indices, GL_UNSIGNED_SHORT, 0);
+        glBindVertexArray(0);
     }
 
     void Object::load_mesh(const std::string& mesh_file_path)
@@ -126,7 +166,7 @@ namespace PracticaKatya
         auto scene = importer.ReadFile
         (
             mesh_file_path,
-            aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
+            aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_GenSmoothNormals
         );
 
         // Si scene es un puntero nulo significa que el archivo no se pudo cargar con éxito:
@@ -142,16 +182,17 @@ namespace PracticaKatya
 
             for (unsigned int i = 0; i < number_of_vertices; ++i) {
                 // Si existen coordenadas UV, se usan. Sino, se asigna (0,0)
-                if (mesh->mTextureCoords[0]) 
+                if (mesh->mTextureCoords[0])
                 {
                     texCoords.push_back(glm::vec2(mesh->mTextureCoords[0][i].x,
-                    mesh->mTextureCoords[0][i].y));
+                        mesh->mTextureCoords[0][i].y));
                 }
-                else 
+                else
                 {
                     texCoords.push_back(glm::vec2(0.0f, 0.0f));
                 }
             }
+
 
             // Se generan índices para los VBOs del objeto:
 
@@ -178,6 +219,22 @@ namespace PracticaKatya
             glEnableVertexAttribArray(1);  // ubicación en el shader: layout(location = 1)
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+
+
+
+
+
+
+            if (mesh->mNormals != nullptr) {
+                // El mesh tiene normales
+                glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[NORMALS_VBO]);  // Asegúrate de definir NORMALS_VBO en tu enum
+                glBufferData(GL_ARRAY_BUFFER, number_of_vertices * sizeof(aiVector3D), mesh->mNormals, GL_STATIC_DRAW);
+                glEnableVertexAttribArray(2);  // Ubicación 2 para las normales
+                glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+            }
+
+
+
             // El número de indices se sabe multiplicando por tres cada cara (ya que se conforma por 3 vertices)
             number_of_indices = mesh->mNumFaces * 3;
 
@@ -200,6 +257,8 @@ namespace PracticaKatya
             // Se suben a un EBO los datos de índices:
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLshort), indices.data(), GL_STATIC_DRAW);
+
+
         }
     }
 

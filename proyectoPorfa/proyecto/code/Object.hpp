@@ -20,6 +20,7 @@ namespace PracticaKatya
             COORDINATES_VBO,
             TEXCOORDS_VBO,
             INDICES_EBO,
+            NORMALS_VBO,
             VBO_COUNT
         };
 
@@ -39,7 +40,7 @@ namespace PracticaKatya
         GLint        projection_matrix_id;
 
         Shader shader;
-       float  angle;
+        float  angle;
 
     public:
 
