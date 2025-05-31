@@ -40,6 +40,7 @@ namespace PracticaKatya
         GLint        projection_matrix_id;
 
         Shader shader;
+
         float  angle;
 
     public:
@@ -47,7 +48,7 @@ namespace PracticaKatya
         Object (const std::string mesh_file_path, const std::string texture_path);
         ~Object();
 
-        void render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor);
+        void render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor, float specularIntensity, float shininess);
         void update();
         void resize(int width, int height);
 

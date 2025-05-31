@@ -47,6 +47,7 @@
             int    last_pointer_y;
 
 
+
         public:
             bool keys[4] = { false, false, false, false };
             struct LightBlockData
@@ -56,7 +57,6 @@
                 float ambientIntensity;
                 float diffuseIntensity;
             };
-
 
         public:
             Scene(int width, int height);
@@ -71,9 +71,8 @@
 
 
          private:
-            void   resize             (int width_, int height_);
-            void   configure_material (GLuint program_id);
-            void   configure_light    (GLuint program_id);
+            void   resize           (int width_, int height_);
+            void   configure_light  ();
 
         };
 

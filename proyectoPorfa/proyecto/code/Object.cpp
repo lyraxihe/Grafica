@@ -38,23 +38,19 @@ namespace PracticaKatya
         "layout (location = 2) in vec3 vertex_normal;"
         ""
         "out vec2 texture_uv;"
-        "out float lightFactor;"
+        "out vec3 frag_normal;"
+        "out vec3 frag_position;"
         ""
         "void main()"
         "{"
-        "vec4 worldPosition = model_view_matrix * vec4(vertex_coordinates, 1.0);"
-        "gl_Position = projection_matrix * worldPosition;"
-        " texture_uv = vertex_texture_uv;"
+        "   vec4 worldPosition = model_view_matrix * vec4(vertex_coordinates, 1.0);"
+        "   gl_Position = projection_matrix * worldPosition;"
+        "   texture_uv = vertex_texture_uv;"
         ""
-        "vec3 normal = normalize(normal_matrix * vertex_normal);"
-        ""
-        "vec3 lightDir = normalize(lightPosition.xyz - worldPosition.xyz);"
-        "float diff = max(dot(normal, lightDir), 0.0);"
-        "lightFactor = ambientIntensity + diffuseIntensity * diff;"
+        "    frag_position = worldPosition.xyz;"
+        "    frag_normal = normalize(normal_matrix * vertex_normal);"
         "}";
 
-    //        "   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
-   // "   texture_uv  = vertex_texture_uv;"
 
 
     const string Object::fragment_shader_code =
@@ -70,15 +66,32 @@ namespace PracticaKatya
         "};"
         ""
         "uniform sampler2D sampler;"
+        "uniform float specularIntensity;"
+        "uniform float shininess;"
         ""
         "in  vec2 texture_uv;"
-        "in float lightFactor;"
+        "in  vec3 frag_normal;"
+        "in  vec3 frag_position;"
         "out vec4 fragment_color;"
         ""
         "void main()"
         "{"
         "   vec4 tex_color = texture(sampler, texture_uv);"
-        "   fragment_color = vec4(tex_color.rgb * lightFactor * lightColor, tex_color.a);"
+        ""
+        "   vec3 ambient = ambientIntensity * lightColor;"
+        ""
+        "   vec3 norm = normalize(frag_normal);"
+        "   vec3 lightDir = normalize(lightPosition.xyz - frag_position);"
+        "   float diff = max(dot(norm, lightDir), 0.0);"
+        "   vec3 diffuse = diffuseIntensity * diff * lightColor;"
+        ""
+        "   vec3 viewDir = normalize(-frag_position);"
+        "   vec3 halfDir = normalize(lightDir + viewDir);"
+        "   float spec = pow(max(dot(norm, halfDir), 0.0), shininess);"
+        "   vec3 specular = specularIntensity * spec * lightColor;"
+        ""
+        "   vec3 result = (ambient + diffuse + specular) * tex_color.rgb;"
+        "   fragment_color = vec4(result, tex_color.a);"
         "}";
     //        "   fragment_color = vec4(texture (sampler, texture_uv).rgb, 0.5);"
     Object::Object(const std::string mesh_file_path, const std::string texture_path)
@@ -105,6 +118,7 @@ namespace PracticaKatya
         {
             glUniformBlockBinding(shader_program_id, lightBlockIndex, 0); // 0 es el binding point elegido
         }
+
     }
 
     Object::~Object()
@@ -133,9 +147,16 @@ namespace PracticaKatya
         glViewport(0, 0, width_, height_);
     }
 
-    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor)
+    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor, float specularIntensity, float shininess)
     {
         shader.use();
+
+        GLint specularIntensityLoc = glGetUniformLocation(shader_program_id, "specularIntensity");
+        glUniform1f(specularIntensityLoc, specularIntensity); // Ajusta el valor deseado 0.5
+
+        GLint shininessLoc = glGetUniformLocation(shader_program_id, "shininess");
+        glUniform1f(shininessLoc, shininess); // Ajusta el brillo deseado 32.f
+
 
         // Construir la matriz modelo (modifícala según lo que necesites)
         glm::mat4 model_matrix = glm::mat4(1);

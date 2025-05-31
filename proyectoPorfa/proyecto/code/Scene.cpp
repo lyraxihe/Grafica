@@ -36,21 +36,7 @@ namespace PracticaKatya
 
         resize(width, height);
         pointer_pressed = false;
-
-        //configuración de luces
-        GLuint uboLights;
-        glGenBuffers(1, &uboLights);
-        glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
-        LightBlockData lightData;
-        lightData.lightPosition = glm::vec4(1.f, 10.f, 4.f, 1.f);
-        lightData.lightColor = glm::vec3(1.f, 1.f, 1.f);
-        lightData.ambientIntensity = 0.4f;
-        lightData.diffuseIntensity = 0.8f;
-        glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlockData), &lightData, GL_STATIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-        // Vincula el UBO al binding point 0
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboLights);
+        configure_light();
 
     }
 
@@ -82,8 +68,6 @@ namespace PracticaKatya
 
         camera.move(movement);
 
-        //flor.update();
-        //conejo.update();
     }
 
     void Scene::render()
@@ -110,22 +94,18 @@ namespace PracticaKatya
 
 
 
-
-
-
-
         // se renderiza la flor  
-        //                                             translate               angle                rotation               scalation 
-        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f       );
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess
+        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f,                 0.1f,                  10.f       );
 
-        //                                             translate               angle                rotation               scalation 
-        flor_1.render(view_matrix,         glm::vec3(-1.f, -1.7f, 4.5f),       angle,        glm::vec3(0.f, 1.f, 0.f),         1.f       );
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        flor_1.render(view_matrix,         glm::vec3(-1.f, -1.7f, 4.5f),       angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 0.2f,                  32.f       );
 
-        //                                             translate               angle                rotation               scalation 
-        flor_2.render(view_matrix,         glm::vec3(2.f, -1.f, 1.f),          angle,        glm::vec3(0.f, 1.f, 0.f),         1.f       );
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        flor_2.render(view_matrix,         glm::vec3(2.f, -1.f, 1.f),          angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 0.8f,                  32.f        );
 
-        //                                             translate               angle                rotation               scalation 
-        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 6.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f       );
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 6.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 1.f,                   50.f       );
 
         //                                             translate              rotation              scalation 
         terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 3.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );
@@ -175,24 +155,23 @@ namespace PracticaKatya
 
     }
 
-    void Scene::configure_material(GLuint program_id)
+    void Scene::configure_light()
     {
-        GLint material_color = glGetUniformLocation(program_id, "material_color");
+        //configuración de luces
+        GLuint uboLights;
+        glGenBuffers(1, &uboLights);
+        glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
+        LightBlockData lightData;
+        lightData.lightPosition = camera.get_transform_matrix_inverse() * glm::vec4(1.f, 10.f, 4.f, 1.f);
+        lightData.lightColor = glm::vec3(1.f, 1.f, 1.f);
+        lightData.ambientIntensity = 0.4f;
+        lightData.diffuseIntensity = 0.8f;
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlockData), &lightData, GL_STATIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-        glUniform3f(material_color, 1.f, 1.f, 1.f);
+        // Vincula el UBO al binding point 0
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboLights);
     }
 
-    void Scene::configure_light(GLuint program_id)
-    {
-        GLint light_position = glGetUniformLocation(program_id, "light.position");
-        GLint light_color = glGetUniformLocation(program_id, "light.color");
-        GLint ambient_intensity = glGetUniformLocation(program_id, "ambient_intensity");
-        GLint diffuse_intensity = glGetUniformLocation(program_id, "diffuse_intensity");
-
-        glUniform4f(light_position, 1.0f, 1.f, 1.f, 1.f);
-        glUniform3f(light_color, 1.f, 1.f, 1.f);
-        glUniform1f(ambient_intensity, 0.2f);
-        glUniform1f(diffuse_intensity, 0.8f);
-    }
 }
 
