@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\shared\code\Window.cpp" />
+    <ClCompile Include="..\..\code\Bloom.cpp" />
     <ClCompile Include="..\..\code\main.cpp" />
     <ClCompile Include="..\..\code\Object.cpp" />
     <ClCompile Include="..\..\code\Scene.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\shared\code\Window.hpp" />
+    <ClInclude Include="..\..\code\Bloom.hpp" />
     <ClInclude Include="..\..\code\Camera.hpp" />
     <ClInclude Include="..\..\code\Color.hpp" />
     <ClInclude Include="..\..\code\Color_Buffer.hpp" />

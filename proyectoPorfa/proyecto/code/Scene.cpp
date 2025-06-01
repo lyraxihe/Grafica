@@ -11,6 +11,7 @@
 #include <gtc/type_ptr.hpp>
 
 
+
 using namespace std;
 using namespace glm;
 
@@ -25,7 +26,8 @@ namespace PracticaKatya
         flor_2("../../../shared/assets/flor_2.obj", "../../../shared/assets/flor_2T.png"),
         flor_3("../../../shared/assets/flor_3.obj", "../../../shared/assets/flor_3T.png"),
         terrain(10.f, 10.f, 800, 800),
-        angle(0)
+        angle(0),
+        bloom(width, height)
     {
         // Se establece la configuración básica:
        //glEnable     (GL_CULL_FACE);
@@ -72,6 +74,7 @@ namespace PracticaKatya
 
     void Scene::render()
     {
+        bloom.beginRender();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //renderiza el kybox
@@ -93,7 +96,6 @@ namespace PracticaKatya
         glDepthMask(GL_TRUE);
 
 
-
         // se renderiza la flor  
         //                                             translate               angle                rotation               scalation         specularIntensity          shininess
         flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f,                 0.1f,                  10.f       );
@@ -109,6 +111,10 @@ namespace PracticaKatya
 
         //                                             translate              rotation              scalation 
         terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 3.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        bloom.render();
     }
 
     void Scene::resize(int width_, int height_)

@@ -12,6 +12,7 @@
     #include "Camera.hpp"
     #include "Skybox.hpp"  
     #include "Terrain.hpp"
+    #include "Bloom.hpp"
 
     namespace PracticaKatya
     {
@@ -46,6 +47,7 @@
             int    last_pointer_x;
             int    last_pointer_y;
 
+            Bloom bloom;
 
 
         public:
