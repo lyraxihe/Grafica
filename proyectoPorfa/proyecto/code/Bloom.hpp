@@ -29,8 +29,8 @@ namespace PracticaKatya
 
 
         float threshold = .7f;       // Valor inicial, ajustable
-        int blurIterations = 12;      // Número de pasadas para el desenfoque
-        float exposure = 1.5f;        // Valor inicial, ajustable
+        int blurIterations = 12;     // Número de pasadas para el desenfoque
+        float exposure = 1.5f;       // Valor inicial, ajustable
 
         // Código GLSL estático para inicializar nuestros shaders
         static const std::string quad_vertex_shader_code;

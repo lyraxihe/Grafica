@@ -48,6 +48,7 @@
             int    last_pointer_y;
 
             Bloom bloom;
+            GLuint uboLights;
 
 
         public:

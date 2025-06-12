@@ -1,7 +1,4 @@
 
-// Este código es de dominio público
-// angel.rodriguez@udit.es
-
 #include "Scene.hpp"
 #include <cassert>
 #include <iostream>
@@ -9,7 +6,6 @@
 #include <memory>
 #include <SOIL2.h>
 #include <gtc/type_ptr.hpp>
-
 
 
 using namespace std;
@@ -21,7 +17,7 @@ namespace PracticaKatya
     Scene::Scene(int width, int height)
     :
         skybox("../../../shared/assets/sky-cube-map-"), 
-        flor_0("../../../shared/assets/flor_0.obj", "../../../shared/assets/flor_0T.jpeg"), 
+        flor_0("../../../shared/assets/flor_0.obj", "../../../shared/assets/flor_0T.jpeg"),
         flor_1("../../../shared/assets/flor_1.obj", "../../../shared/assets/flor_1T.png"),
         flor_2("../../../shared/assets/flor_2.obj", "../../../shared/assets/flor_2T.png"),
         flor_3("../../../shared/assets/flor_3.obj", "../../../shared/assets/flor_3T.png"),
@@ -30,7 +26,6 @@ namespace PracticaKatya
         bloom(width, height)
     {
         // Se establece la configuración básica:
-       //glEnable     (GL_CULL_FACE);
         glDisable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
@@ -38,6 +33,8 @@ namespace PracticaKatya
 
         resize(width, height);
         pointer_pressed = false;
+
+        glGenBuffers(1, &uboLights);
         configure_light();
 
     }
@@ -74,12 +71,16 @@ namespace PracticaKatya
 
     void Scene::render()
     {
+
+
         bloom.beginRender();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //renderiza el kybox
         skybox.render(camera);
         
+        configure_light();
+
         //se crea el view_matrix teniendo en cuenta la vista de la cámara
         glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
 
@@ -164,8 +165,6 @@ namespace PracticaKatya
     void Scene::configure_light()
     {
         //configuración de luces
-        GLuint uboLights;
-        glGenBuffers(1, &uboLights);
         glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
         LightBlockData lightData;
         lightData.lightPosition = camera.get_transform_matrix_inverse() * glm::vec4(1.f, 10.f, 4.f, 1.f);
