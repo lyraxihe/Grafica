@@ -1,6 +1,5 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
+/// @author Katya
+/// @copyright () Katya
 
 #pragma once
 

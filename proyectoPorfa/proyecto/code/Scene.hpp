@@ -1,6 +1,5 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
+/// @author Katya
+/// @copyright () Katya
 
 #ifndef SCENE_HEADER
 #define SCENE_HEADER
@@ -19,6 +18,8 @@
 
         using glm::vec3;
 
+        /// @brief Esta clase gestiona el código para crear y renderizar una escena.
+        /// La escena contiene cámara,objetos, terreno, skybox, animaciones, luz y postproceso bloom
         class Scene
         {
         private:
@@ -62,19 +63,41 @@
             };
 
         public:
+            /// inicializa la escena cargando los mesh y textura de objetos, terreno y skybox
+            /// @param width ancho de la escena
+            /// @param height alto de la escena
             Scene(int width, int height);
            ~Scene();
 
+            /// update que se actualiza constantemente
             void   update();
+
+            /// renderiza los objetos, el skybox y terreno dentro de la escena, pasandoles valores de renderizado y aplicando bloom
             void   render();
 
+            /// rota la cámara
+            /// @param pointer_x número para localizar puntero en x
+            /// @param pointer_y número para localizar puntero en y
             void   on_drag     (int pointer_x, int pointer_y);
+
+            /// comienza a tomar lo valores del puntero
+            /// @param pointer_x número para localizar puntero en x
+            /// @param pointer_y número para localizar puntero en y
+            /// @param down detecta si se está haciendo click
             void   on_click    (int pointer_x, int pointer_y, bool down);
 
 
 
          private:
+            /// @brief asigna el width y height
+            /// ejecuta set ratio de la cámara
+            /// Establece el viewport
+            /// Ejecuta la función resize() de los objetos
+            /// @param width  El ancho de la pantalla
+            /// @param height El alto de la pantalla
             void   resize           (int width_, int height_);
+
+            /// Crea lightData con los valores para configurar la luz y hace bind con uboLights
             void   configure_light  ();
 
         };

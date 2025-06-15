@@ -1,7 +1,3 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
-
 #pragma once
 
 #include <cassert>
@@ -23,14 +19,12 @@ namespace PracticaKatya
     )
     {
         // Se inicializa SDL:
-
         if (SDL_InitSubSystem (SDL_INIT_VIDEO) < 0)
         {
             throw "Failed to initialize the video subsystem.";
         }
 
         // Se preconfigura el contexto de OpenGL:
-
         SDL_GL_SetAttribute (SDL_GL_CONTEXT_MAJOR_VERSION, context_details.version_major);
         SDL_GL_SetAttribute (SDL_GL_CONTEXT_MINOR_VERSION, context_details.version_minor);
         SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER,          1);
@@ -41,7 +35,6 @@ namespace PracticaKatya
         if (context_details.stencil_buffer_size) SDL_GL_SetAttribute (SDL_GL_STENCIL_SIZE, context_details.stencil_buffer_size);
 
         // Se crea la ventana activando el soporte para OpenGL:
-
         window_handle = SDL_CreateWindow
         (
             title,

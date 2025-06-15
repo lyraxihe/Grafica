@@ -1,7 +1,3 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
-
 #include <vector>
 #include <SOIL2.h>
 #include "Texture_Cube.hpp"
@@ -14,7 +10,6 @@ namespace PracticaKatya
         texture_is_loaded = false;
 
         // Se intentan cargar los mapas de bits de todas las caras:
-
         std::vector< std::shared_ptr< Color_Buffer > > texture_sides(6);
 
         for (size_t texture_index = 0; texture_index < 6; texture_index++)
@@ -28,7 +23,6 @@ namespace PracticaKatya
         }
 
         // Se crea un objeto de textura:
-
         glEnable(GL_TEXTURE_CUBE_MAP);
 
         glGenTextures(1, &texture_id);
@@ -37,7 +31,6 @@ namespace PracticaKatya
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture_id);
 
         // Se configura la textura: escalado suavizado, clamping de coordenadas (s,t) hasta el borde:
-
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -45,7 +38,6 @@ namespace PracticaKatya
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         // Se envían los mapas de bits a la GPU:
-
         static const GLenum texture_target[] =
         {
             GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
@@ -81,7 +73,6 @@ namespace PracticaKatya
     std::shared_ptr< Texture_Cube::Color_Buffer > Texture_Cube::load_image(const std::string& image_path)
     {
         // Se carga la imagen del archivo usando SOIL2:
-
         int image_width = 0;
         int image_height = 0;
         int image_channels = 0;
@@ -96,13 +87,11 @@ namespace PracticaKatya
         );                              // al margen del formato usado en el archivo
 
         // Si loaded_pixels no es nullptr, la imagen se ha podido cargar correctamente:
-
         if (loaded_pixels)
         {
             auto image = std::make_shared< Color_Buffer >(image_width, image_height);
 
             // Se copian los bytes directamente (de formato Rgb24 a formato Rgb24):
-
             std::copy_n
             (
                 loaded_pixels,
@@ -111,7 +100,6 @@ namespace PracticaKatya
             );
 
             // Se libera la memoria que reservó SOIL2 para cargar la imagen:
-
             SOIL_free_image_data(loaded_pixels);
 
             return image;

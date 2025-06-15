@@ -1,7 +1,3 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
-
 #include "Terrain.hpp"
 #include <glm.hpp>
 #include <half.hpp>
@@ -90,21 +86,18 @@ namespace PracticaKatya
                 texture_uvs[coordinate_index + 1] = half(v);
             }
 
-            x += x_step = -x_step;                              // Se invierte el sentido para hacer un zigzag
+            x += x_step = -x_step;    // Se invierte el sentido para hacer un zigzag
             u += u_step = -u_step;
         }
 
         // Se crean el VAO y los VBOs:
-
         glGenVertexArrays(1, &vao_id);
         glGenBuffers(VBO_COUNT, vbo_ids);
 
         // Se activa el VAO para configurarlo:
-
         glBindVertexArray(vao_id);
 
         // Se suben a un VBO los datos de coordenadas y se vinculan al VAO:
-
         glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[COORDINATES_VBO]);
         glBufferData(GL_ARRAY_BUFFER, coordinates.size() * sizeof(half), coordinates.data(), GL_STATIC_DRAW);
 
@@ -112,7 +105,6 @@ namespace PracticaKatya
         glVertexAttribPointer(0, 2, GL_HALF_FLOAT, GL_FALSE, 0, 0);
 
         // Se suben a un VBO los datos de coordenadas de textura y se vinculan al VAO:
-
         glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[TEXTURE_UVS_VBO]);
         glBufferData(GL_ARRAY_BUFFER, texture_uvs.size() * sizeof(half), texture_uvs.data(), GL_STATIC_DRAW);
 
@@ -126,18 +118,14 @@ namespace PracticaKatya
         projection_matrix_id = glGetUniformLocation(shader_program_id, "projection_matrix");
 
         // Se establece la altura máxima del height map en el vertex shader:
-
         glUniform1f(glGetUniformLocation(shader_program_id, "max_height"), 5.f);
 
         // Se carga la textura y se envía a la GPU:
-
         texture_id = create_texture_2d_monochrome(texture_path);
-            //create_texture_2d< Monochrome8 >(texture_path);
 
         there_is_texture = texture_id > 0;
 
         // Se establece la configuración básica:
-
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.1f, 0.1f, 0.1f, 1.f);
@@ -154,14 +142,13 @@ namespace PracticaKatya
         shader.use();
 
         glm::mat4 model_matrix = glm::mat4(1);
-        model_matrix = glm::translate(model_matrix, translation); //glm::vec3(0.f, 0.f, -11.f)
-        model_matrix = glm::rotate(model_matrix, .1f, rotation); //glm::vec3(1.f, 0.f, 0.f)
+        model_matrix = glm::translate(model_matrix, translation);
+        model_matrix = glm::rotate(model_matrix, .1f, rotation);
 
         glm::mat4 model_view_matrix = view_matrix * model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
 
         // Se selecciona la textura si está disponible:
-
         if (there_is_texture)
         {
             glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -169,7 +156,6 @@ namespace PracticaKatya
         
         // Se selecciona el VAO que contiene los datos del objeto y se dibujan sus vértices
         // conectándolos con líneas:
-
         glBindVertexArray(vao_id);
         glDrawArrays(GL_LINE_STRIP, 0, number_of_vertices);
     }
@@ -195,7 +181,6 @@ namespace PracticaKatya
         int image_channels = 0;
 
         // Forzamos una imagen de un canal (L = luminancia, escala de grises)
-        // Consulta la documentación de SOIL2; en algunas versiones se usa SOIL_LOAD_L o simplemente 1.
         unsigned char* loaded_pixels = SOIL_load_image(texture_path.c_str(),
             &image_width,
             &image_height,
@@ -213,8 +198,6 @@ namespace PracticaKatya
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            // Aquí usamos GL_R8 para el formato interno (1 canal de 8 bits)
-            // Y GL_RED para el formato de la imagen que se está enviando.
             glTexImage2D(GL_TEXTURE_2D,
                 0,
                 GL_R8,

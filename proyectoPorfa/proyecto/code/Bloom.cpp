@@ -1,5 +1,5 @@
 #include <iostream>
-#include <gtc/type_ptr.hpp>                 // value_ptr
+#include <gtc/type_ptr.hpp>
 #include "Bloom.hpp"
 
 namespace PracticaKatya
@@ -7,8 +7,7 @@ namespace PracticaKatya
 
     using namespace std;
 
-    // Definiciones de código GLSL (puedes definirlos usando raw strings)
-    const std::string Bloom::quad_vertex_shader_code = R"(
+    const string Bloom::quad_vertex_shader_code = R"(
         #version 330 core
         layout (location = 0) in vec2 aPos;
         layout (location = 1) in vec2 aTexCoords;
@@ -19,7 +18,7 @@ namespace PracticaKatya
         }
     )";
 
-    const std::string Bloom::threshold_fragment_shader_code = R"(
+    const string Bloom::threshold_fragment_shader_code = R"(
         #version 330 core
         out vec4 FragColor;
         in vec2 TexCoords;
@@ -35,7 +34,7 @@ namespace PracticaKatya
         }
     )";
 
-    const std::string Bloom::blur_fragment_shader_code = R"(
+    const string Bloom::blur_fragment_shader_code = R"(
         #version 330 core
         out vec4 FragColor;
         in vec2 TexCoords;
@@ -60,7 +59,7 @@ namespace PracticaKatya
         }
     )";
 
-    const std::string Bloom::final_fragment_shader_code = R"(
+    const string Bloom::final_fragment_shader_code = R"(
         #version 330 core
         out vec4 FragColor;
         in vec2 TexCoords;
@@ -87,7 +86,6 @@ namespace PracticaKatya
         initBuffers();
     }
 
-
     Bloom:: ~Bloom()
     {
         glDeleteFramebuffers(1, &hdrFBO);
@@ -100,8 +98,10 @@ namespace PracticaKatya
         if (quadVBO)
             glDeleteBuffers(1, &quadVBO);
     }
-    void Bloom::initBuffers() {
-        // 1. Crear FBO HDR
+
+    void Bloom::initBuffers() 
+    {
+        // Crea el FBO HDR
         glGenFramebuffers(1, &hdrFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 
@@ -119,14 +119,13 @@ namespace PracticaKatya
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            std::cout << "HDR Framebuffer no está completo!" << std::endl;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // 2. Crear FBOs para blur (ping-pong)
+        // Crea FBOs para blur (ping-pong)
         glGenFramebuffers(2, pingpongFBO);
         glGenTextures(2, pingpongColorbuffers);
-        for (unsigned int i = 0; i < 2; i++) {
+        for (unsigned int i = 0; i < 2; i++) 
+        {
             glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
             glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[i]);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -135,15 +134,17 @@ namespace PracticaKatya
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorbuffers[i], 0);
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-                std::cout << "Pingpong Framebuffer #" << i << " no está completo!" << std::endl;
+
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void Bloom::renderQuad() {
-        if (quadVAO == 0) {
-            float quadVertices[] = {
+    void Bloom::renderQuad() 
+    {
+        if (quadVAO == 0) 
+        {
+            float quadVertices[] = 
+            {
                 // positions   // texCoords
                 -1.0f,  1.0f,  0.0f, 1.0f,
                 -1.0f, -1.0f,  0.0f, 0.0f,
@@ -168,9 +169,10 @@ namespace PracticaKatya
         glBindVertexArray(0);
     }
 
-    // Este método aplica el pipeline de post-procesado Bloom.
-    void Bloom::render() {
-        // 1. Aplicar el shader de threshold para extraer zonas brillantes
+    // Aplica el post proceso de Bloom
+    void Bloom::render() 
+    {
+        // Aplicar el shader de threshold para extraer zonas brillantes
         thresholdShader.use();
         GLint locThreshold = glGetUniformLocation(thresholdShader.getID(), "threshold");
         glUniform1f(locThreshold, threshold);
@@ -179,34 +181,40 @@ namespace PracticaKatya
         GLint locScene = glGetUniformLocation(thresholdShader.getID(), "scene");
         glUniform1i(locScene, 0);
 
-        // Renderizamos la textura resultante del threshold a pingpongFBO[0]
+        // Renderiza la textura resultante del threshold a pingpongFBO[0]
         glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[0]);
         glClear(GL_COLOR_BUFFER_BIT);
         renderQuad();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // 2. Aplicar blur en múltiples iteraciones (ping-pong)
+        // Aplica blur en múltiples iteraciones (ping-pong)
         bool horizontal = true, first_iteration = true;
         blurShader.use();
-        for (int i = 0; i < blurIterations; i++) {
+        for (int i = 0; i < blurIterations; i++) 
+        {
             glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
             GLint locHorizontal = glGetUniformLocation(blurShader.getID(), "horizontal");
             glUniform1i(locHorizontal, horizontal ? 1 : 0);
             glActiveTexture(GL_TEXTURE0);
+
             if (first_iteration)
                 glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[0]);
             else
                 glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
+
             GLint locImage = glGetUniformLocation(blurShader.getID(), "image");
             glUniform1i(locImage, 0);
+
             renderQuad();
+
             horizontal = !horizontal;
+
             if (first_iteration)
                 first_iteration = false;
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // 3. Combinar la escena original (colorBuffer) con el bloom (última textura blur)
+        // Combina la escena original (colorBuffer) con el bloom (última textura blur)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         finalShader.use();
         glActiveTexture(GL_TEXTURE0);
@@ -222,7 +230,8 @@ namespace PracticaKatya
         renderQuad();
     }
 
-    void Bloom::beginRender() {
+    void Bloom::beginRender() 
+    {
         // Vincula el HDR FBO para que todo lo que se renderice se guarde en la textura de color
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
     }

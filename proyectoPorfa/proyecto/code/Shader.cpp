@@ -14,7 +14,6 @@ namespace PracticaKatya
 		glDeleteProgram(shader_id);
 	}
 
-
 	void Shader::use()
 	{
 		glUseProgram(shader_id);

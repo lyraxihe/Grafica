@@ -1,6 +1,5 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
+/// @author Katya
+/// @copyright () Katya
 
 #ifndef TEXTURE_CUBE_HEADER
 #define TEXTURE_CUBE_HEADER
@@ -13,7 +12,7 @@
 
 namespace PracticaKatya
 {
-
+    /// Esta clase gestiona el código de un cubo con textura para el skybox.
     class Texture_Cube
     {
     private:
@@ -26,7 +25,8 @@ namespace PracticaKatya
         bool   texture_is_loaded;
 
     public:
-
+        /// inicializa el cubo con una textura
+        /// @param texture_base_path El path de la textura a aplicar al cubo
         Texture_Cube(const std::string& texture_base_path);
         ~Texture_Cube();
 

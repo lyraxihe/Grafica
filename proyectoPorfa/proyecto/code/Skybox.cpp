@@ -1,8 +1,3 @@
-
-// Este código es de dominio público.
-// angel.rodriguez@esne.edu
-// 2014.03+
-
 #include <cassert>
 #include <iostream>
 #include <glad/glad.h>
@@ -33,7 +28,7 @@ namespace PracticaKatya
         -1.0f,  1.0f,  1.0f,
         -1.0f, -1.0f,  1.0f,
 
-        // Right face
+         // Right face
          1.0f, -1.0f, -1.0f,
          1.0f, -1.0f,  1.0f,
          1.0f,  1.0f,  1.0f,
@@ -82,8 +77,6 @@ namespace PracticaKatya
         "   texture_coordinates = vertex_coordinates;"
         "   vec4 pos = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
         "   gl_Position = pos.xyww;"
-        //"   texture_coordinates = vec3(vertex_coordinates.x, vertex_coordinates.y, vertex_coordinates.z);"
-        //"   gl_Position = projection_matrix * model_view_matrix * vec4(vertex_coordinates, 1.0);"
         "}";
 
     const std::string Skybox::fragment_shader_code =
@@ -108,23 +101,19 @@ namespace PracticaKatya
         assert(texture_cube.is_ok());
 
         // Se compilan y linkan los shaders:
-
         shader_program_id = shader.getID();
 
         model_view_matrix_id = glGetUniformLocation(shader_program_id, "model_view_matrix");
         projection_matrix_id = glGetUniformLocation(shader_program_id, "projection_matrix");
 
         // Se generan índices para los VBOs del cubo:
-
         glGenBuffers(1, &vbo_id);
         glGenVertexArrays(1, &vao_id);
 
         // Se activa el VAO del cubo para configurarlo:
-
         glBindVertexArray(vao_id);
 
         // Se suben a un VBO los datos de coordenadas y se vinculan al VAO:
-
         glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
         glBufferData(GL_ARRAY_BUFFER, sizeof(coordinates), coordinates, GL_STATIC_DRAW);
 
@@ -137,7 +126,6 @@ namespace PracticaKatya
     Skybox::~Skybox()
     {
         // Se libera el VBO y el VAO usados:
-
         glDeleteVertexArrays(1, &vao_id);
         glDeleteBuffers(1, &vbo_id);
     }

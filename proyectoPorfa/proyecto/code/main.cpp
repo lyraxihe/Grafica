@@ -15,7 +15,7 @@ int main (int , char * [])
 
     Window window
     (
-        "OpenGL example",
+        "Practica Katya",
         Window::Position::CENTERED,
         Window::Position::CENTERED,
         viewport_width,
@@ -33,7 +33,6 @@ int main (int , char * [])
     do
     {
         // Se procesan los eventos acumulados:
-
         SDL_Event event;
 
         while (SDL_PollEvent (&event) > 0)
@@ -78,7 +77,7 @@ int main (int , char * [])
                     break;
                 }
 
-                case SDL_KEYUP:												  // If a Keyboard key is released
+                case SDL_KEYUP:
                 {
                     if (event.key.keysym.sym == SDLK_w) scene.keys[0] = false;
                     if (event.key.keysym.sym == SDLK_s) scene.keys[1] = false;
@@ -96,15 +95,12 @@ int main (int , char * [])
         }
 
         // Se actualiza la escena:
-
         scene.update ();
 
         // Se redibuja la escena:
-
         scene.render ();
 
         // Se actualiza el contenido de la ventana:
-
         window.swap_buffers ();
     }
     while (not exit);

@@ -93,11 +93,10 @@ namespace PracticaKatya
         "   vec3 result = (ambient + diffuse + specular) * tex_color.rgb;"
         "   fragment_color = vec4(result, tex_color.a);"
         "}";
-    //        "   fragment_color = vec4(texture (sampler, texture_uv).rgb, 0.5);"
+
     Object::Object(const std::string mesh_file_path, const std::string texture_path)
-        :
+    :
         shader(vertex_shader_code, fragment_shader_code)
-        //angle(0)
     {
 
         // Crea la textura y la malla
@@ -116,7 +115,7 @@ namespace PracticaKatya
         GLuint lightBlockIndex = glGetUniformBlockIndex(shader_program_id, "LightBlock");
         if (lightBlockIndex != GL_INVALID_INDEX)
         {
-            glUniformBlockBinding(shader_program_id, lightBlockIndex, 0); // 0 es el binding point elegido
+            glUniformBlockBinding(shader_program_id, lightBlockIndex, 0);
         }
 
     }
@@ -131,7 +130,7 @@ namespace PracticaKatya
 
     void Object::update()
     {
-        //angle += 0.01f;
+
     }
 
     void Object::resize(int width_, int height_)
@@ -139,7 +138,7 @@ namespace PracticaKatya
         // Activa el shader de este objeto
         glUseProgram(shader_program_id);
 
-        // Calcula la proyección y actualiza el uniforme
+        // Calcula la proyección y actualiza el uniform
         glm::mat4 projection_matrix = glm::perspective(20.f, GLfloat(width_) / height_, 1.f, 5000.f);
         glUniformMatrix4fv(projection_matrix_id, 1, GL_FALSE, glm::value_ptr(projection_matrix));
 
@@ -152,13 +151,11 @@ namespace PracticaKatya
         shader.use();
 
         GLint specularIntensityLoc = glGetUniformLocation(shader_program_id, "specularIntensity");
-        glUniform1f(specularIntensityLoc, specularIntensity); // Ajusta el valor deseado 0.5
+        glUniform1f(specularIntensityLoc, specularIntensity);
 
         GLint shininessLoc = glGetUniformLocation(shader_program_id, "shininess");
-        glUniform1f(shininessLoc, shininess); // Ajusta el brillo deseado 32.f
+        glUniform1f(shininessLoc, shininess);
 
-
-        // Construir la matriz modelo (modifícala según lo que necesites)
         glm::mat4 model_matrix = glm::mat4(1);
         model_matrix = glm::translate(model_matrix, translation);
         model_matrix = glm::rotate(model_matrix, angle, rotation);
@@ -167,9 +164,9 @@ namespace PracticaKatya
         glm::mat4 model_view_matrix = view_matrix * model_matrix;
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
 
-        // Calcula la normal_matrix: se asume una conversión 3x3 (en caso de escalas no uniformes, se debe ajustar)
         glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_view_matrix)));
         glUniformMatrix3fv(glGetUniformLocation(shader_program_id, "normal_matrix"), 1, GL_FALSE, glm::value_ptr(normal_matrix));
+
         // Vincula la textura a la unidad 0
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -201,7 +198,8 @@ namespace PracticaKatya
             std::vector<glm::vec2> texCoords;
             texCoords.reserve(number_of_vertices);
 
-            for (unsigned int i = 0; i < number_of_vertices; ++i) {
+            for (unsigned int i = 0; i < number_of_vertices; ++i) 
+            {
                 // Si existen coordenadas UV, se usan. Sino, se asigna (0,0)
                 if (mesh->mTextureCoords[0])
                 {
@@ -216,16 +214,13 @@ namespace PracticaKatya
 
 
             // Se generan índices para los VBOs del objeto:
-
             glGenBuffers(VBO_COUNT, vbo_ids);
             glGenVertexArrays(1, &vao_id);
 
             // Se activa el VAO del objeto para configurarlo:
-
             glBindVertexArray(vao_id);
 
             // Se suben a un VBO los datos de coordenadas y se vinculan al VAO:
-
             static_assert(sizeof(aiVector3D) == sizeof(fvec3), "aiVector3D should composed of three floats");
 
             glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[COORDINATES_VBO]);
@@ -240,21 +235,14 @@ namespace PracticaKatya
             glEnableVertexAttribArray(1);  // ubicación en el shader: layout(location = 1)
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-
-
-
-
-
-
-            if (mesh->mNormals != nullptr) {
+            if (mesh->mNormals != nullptr) 
+            {
                 // El mesh tiene normales
-                glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[NORMALS_VBO]);  // Asegúrate de definir NORMALS_VBO en tu enum
+                glBindBuffer(GL_ARRAY_BUFFER, vbo_ids[NORMALS_VBO]);
                 glBufferData(GL_ARRAY_BUFFER, number_of_vertices * sizeof(aiVector3D), mesh->mNormals, GL_STATIC_DRAW);
                 glEnableVertexAttribArray(2);  // Ubicación 2 para las normales
                 glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
             }
-
-
 
             // El número de indices se sabe multiplicando por tres cada cara (ya que se conforma por 3 vertices)
             number_of_indices = mesh->mNumFaces * 3;
@@ -267,7 +255,6 @@ namespace PracticaKatya
             for (unsigned i = 0; i < mesh->mNumFaces; ++i)
             {
                 auto& face = mesh->mFaces[i];
-
                 assert(face.mNumIndices == 3);
 
                 *vertex_index++ = face.mIndices[0];
@@ -278,14 +265,11 @@ namespace PracticaKatya
             // Se suben a un EBO los datos de índices:
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_ids[INDICES_EBO]);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLshort), indices.data(), GL_STATIC_DRAW);
-
-
         }
     }
 
     GLuint Object::create_texture_2d(const std::string& texture_path)
     {
-        // Cargar la imagen con SOIL_load_image
         int image_width = 0;
         int image_height = 0;
         int image_channels = 0;
@@ -301,7 +285,7 @@ namespace PracticaKatya
 
         if (loaded_pixels)
         {
-            // Habilita y genera la textura en OpenGL
+            // Habilita y genera la textura
             GLuint texture_id;
             glEnable(GL_TEXTURE_2D);
             glGenTextures(1, &texture_id);
@@ -313,7 +297,8 @@ namespace PracticaKatya
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             // Se envían los datos de la imagen a la GPU
-            glTexImage2D(
+            glTexImage2D
+            (
                 GL_TEXTURE_2D,
                 0,
                 GL_RGBA,

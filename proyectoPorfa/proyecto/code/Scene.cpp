@@ -1,4 +1,3 @@
-
 #include "Scene.hpp"
 #include <cassert>
 #include <iostream>
@@ -84,13 +83,14 @@ namespace PracticaKatya
         //se crea el view_matrix teniendo en cuenta la vista de la cámara
         glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
 
-        // se renderiza el conejo con transparencia
+        // se renderiza XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX con transparencia
         // Se habilita la mezcla con el color de fondo usando el canal alpha y se deshabilita la escritura en el Z-Buffer:
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // SE RENDERIZA EL OBJ TRANSPARENTE
+        // SE RENDERIZA XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  TRANSPARENTE
+
 
         // Se deshabilita la mezcla con el fondo y se restaura escritura en el Z-Buffer:
         glDisable(GL_BLEND);
@@ -99,16 +99,16 @@ namespace PracticaKatya
 
         // se renderiza la flor  
         //                                             translate               angle                rotation               scalation         specularIntensity          shininess
-        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f,                 0.1f,                  10.f       );
+        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f,                 .1f,                  10.f       );
 
         //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        flor_1.render(view_matrix,         glm::vec3(-1.f, -1.7f, 4.5f),       angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 0.2f,                  32.f       );
+        flor_1.render(view_matrix,         glm::vec3(-1.f, -1.7f, 4.5f),       angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 .2f,                  32.f       );
 
         //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        flor_2.render(view_matrix,         glm::vec3(2.f, -1.f, 1.f),          angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 0.8f,                  32.f        );
+        flor_2.render(view_matrix,         glm::vec3(2.f, -0.5f, 1.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 .6f,                  32.f       );
 
         //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 6.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 1.f,                   50.f       );
+        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 6.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 .4f,                   5.f        );
 
         //                                             translate              rotation              scalation 
         terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 3.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );

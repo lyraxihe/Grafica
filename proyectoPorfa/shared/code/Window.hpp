@@ -1,6 +1,5 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
+/// @author Katya
+/// @copyright () Katya
 
 #pragma once
 
@@ -10,7 +9,7 @@
 
 namespace PracticaKatya
 {
-    
+    /// Esta clase gestiona el código para crear una ventana
     class Window
     {
     public:
@@ -37,7 +36,13 @@ namespace PracticaKatya
         SDL_GLContext opengl_context;
 
     public:
-
+        /// @brief inicializa la ventana con los parámetros pasados
+        /// @param title Titulo
+        /// @param left_x tamaño de x
+        /// @param top_y tamaño de y
+        /// @param width ancho
+        /// @param height alto
+        /// @param context_details detalles de contexto de OpenGL
         Window
         (
             const std::string & title, 

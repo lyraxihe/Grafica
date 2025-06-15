@@ -1,6 +1,5 @@
-
-// Este código es de dominio público
-// angel.rodriguez@udit.es
+/// @author Katya
+/// @copyright () Katya
 
 #ifndef SKYBOX_HEADER
 #define SKYBOX_HEADER
@@ -13,7 +12,8 @@
 
 namespace PracticaKatya
 {
-
+    /// @brief Esta clase gestiona el código del skybox
+    /// Crea el shader del skybox y lo renderiza.
     class Skybox
     {
     private:
@@ -22,8 +22,8 @@ namespace PracticaKatya
         static const std::string   vertex_shader_code;
         static const std::string fragment_shader_code;
 
-        GLuint       vbo_id;                                // Id del VBO de las coordenadas
-        GLuint       vao_id;                                // Id del VAO del cubo
+        GLuint       vbo_id;  // Id del VBO de las coordenadas
+        GLuint       vao_id;  // Id del VAO del cubo
 
         GLuint       shader_program_id;
 
@@ -35,12 +35,13 @@ namespace PracticaKatya
         Shader shader;
 
     public:
-
+        /// Inicializa el skybox con una textura pasada
+        /// @param texture_path el path de la textura (que luego va a aplicar sumandole 1 al nombre)
         Skybox(const std::string& texture_path);
         ~Skybox();
 
     public:
-
+        /// renderiza el skybox teniendo en cuenta la ubicación de la cámara, para así dar la ilusión de infinito
         void render(const Camera& camera);
 
     };
