@@ -20,10 +20,18 @@ namespace PracticaKatya
         flor_1("../../../shared/assets/flor_1.obj", "../../../shared/assets/flor_1T.png"),
         flor_2("../../../shared/assets/flor_2.obj", "../../../shared/assets/flor_2T.png"),
         flor_3("../../../shared/assets/flor_3.obj", "../../../shared/assets/flor_3T.png"),
+        heart("../../../shared/assets/corazon.obj", "../../../shared/assets/heartT.jpeg"),
+        mariposa_0("../../../shared/assets/mariposa.obj", "../../../shared/assets/mariposat.jpeg"),
+        mariposa_1("../../../shared/assets/mariposa.obj", "../../../shared/assets/mariposat.jpeg"),
+        mariposa_2("../../../shared/assets/mariposa.obj", "../../../shared/assets/mariposat.jpeg"),
         terrain(10.f, 10.f, 800, 800),
         angle(0),
         bloom(width, height)
     {
+        //asigna los parent
+       mariposa_1.setParent(&mariposa_0);
+       mariposa_2.setParent(&mariposa_1);
+
         // Se establece la configuración básica:
         glDisable(GL_CULL_FACE);
 
@@ -70,8 +78,6 @@ namespace PracticaKatya
 
     void Scene::render()
     {
-
-
         bloom.beginRender();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -83,35 +89,45 @@ namespace PracticaKatya
         //se crea el view_matrix teniendo en cuenta la vista de la cámara
         glm::mat4 view_matrix = camera.get_transform_matrix_inverse();
 
-        // se renderiza XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX con transparencia
-        // Se habilita la mezcla con el color de fondo usando el canal alpha y se deshabilita la escritura en el Z-Buffer:
+        // se renderizan las flores y el terreno
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess
+        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, -2.f),       angle,        glm::vec3(0.f, 1.f,0.f),          1.f,                 .1f,                  10.f,      false);
+
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        flor_1.render(view_matrix,         glm::vec3(-2.f, -1.7f, 2.f),        angle,        glm::vec3(0.f, 1.f, 0.f),        1.f,                 .2f,                  28.f,       false);
+
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        flor_2.render(view_matrix,         glm::vec3(2.f, -0.5f, -2.f),        angle,        glm::vec3(0.f, 1.f, 0.f),        1.f,                 .6f,                  32.f,       false);
+
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 3.f),         angle,        glm::vec3(0.f, 1.f, 0.f),        1.f,                 .4f,                   5.f,       false);
+      
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        mariposa_0.render(view_matrix,     glm::vec3(5.f, 1.f, 1.f),          -angle,        glm::vec3(0.f, 1.f, 0.f),        10.f,                .4f,                   5.f,       true);
+       
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        mariposa_1.render(view_matrix,     glm::vec3(1.2f, 1.3f, 3.f),        -angle,        glm::vec3(0.f, 1.f, 0.f),        10.f,                .4f,                   5.f,       true);
+
+         //                                             translate              angle                rotation               scalation         specularIntensity          shininess 
+        mariposa_2.render(view_matrix,     glm::vec3(1.f, 0.7f, 2.f),         -angle,        glm::vec3(0.f, 1.f, 0.f),        10.f,                .4f,                   5.f,       true);
+
+        //                                             translate              rotation              scalation 
+        terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 0.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );
+
+       // corazón con transparencia
+       // Se habilita la mezcla con el color de fondo usando el canal alpha y se deshabilita la escritura en el Z-Buffer:
         glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // SE RENDERIZA XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  TRANSPARENTE
+        // se renderiza el corazón transparente
+        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
+        heart.render(view_matrix,          glm::vec3(0.f, 0.f, 0.f),          -angle,        glm::vec3(0.f, 1.f, 0.f),        0.08f,                .5f,                  15.f,       false);
 
 
         // Se deshabilita la mezcla con el fondo y se restaura escritura en el Z-Buffer:
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
-
-
-        // se renderiza la flor  
-        //                                             translate               angle                rotation               scalation         specularIntensity          shininess
-        flor_0.render(view_matrix,         glm::vec3(-2.f, -1.5f, 1.f),        angle,        glm::vec3(0.f, 1.f,0.f),          1.f,                 .1f,                  10.f       );
-
-        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        flor_1.render(view_matrix,         glm::vec3(-1.f, -1.7f, 4.5f),       angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 .2f,                  32.f       );
-
-        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        flor_2.render(view_matrix,         glm::vec3(2.f, -0.5f, 1.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 .6f,                  32.f       );
-
-        //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        flor_3.render(view_matrix,         glm::vec3(4.f, -1.5f, 6.f),         angle,        glm::vec3(0.f, 1.f, 0.f),         1.f,                 .4f,                   5.f        );
-
-        //                                             translate              rotation              scalation 
-        terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 3.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -125,11 +141,15 @@ namespace PracticaKatya
 
         camera.set_ratio(float(width_) / height_);
 
-        flor_0.resize   (width_, height_);
-        flor_1.resize   (width_, height_);
-        flor_2.resize   (width_, height_);
-        flor_3.resize   (width_, height_);
-        terrain.resize  (width_, height_);
+        flor_0.resize     (width_, height_);
+        flor_1.resize     (width_, height_);
+        flor_2.resize     (width_, height_);
+        flor_3.resize     (width_, height_);
+        mariposa_0.resize (width_, height_);
+        mariposa_1.resize (width_, height_);
+        mariposa_2.resize (width_, height_);
+        heart.resize      (width_, height_);
+        terrain.resize    (width_, height_);
 
         glViewport(0, 0, width_, height_);
     }

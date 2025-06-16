@@ -91,7 +91,7 @@ namespace PracticaKatya
         "   vec3 specular = specularIntensity * spec * lightColor;"
         ""
         "   vec3 result = (ambient + diffuse + specular) * tex_color.rgb;"
-        "   fragment_color = vec4(result, tex_color.a);"
+        "   fragment_color = vec4(result, 0.3f);"
         "}";
 
     Object::Object(const std::string mesh_file_path, const std::string texture_path)
@@ -146,9 +146,16 @@ namespace PracticaKatya
         glViewport(0, 0, width_, height_);
     }
 
-    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor, float specularIntensity, float shininess)
+    void Object::render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor, float specularIntensity, float shininess, bool invertRotation)
     {
         shader.use();
+
+        ObjectTranslation = translation;
+        //comprueba si tiene padre y multiplica su translation por el del padre
+        if (parent != nullptr)
+        {
+            ObjectTranslation *= parent->getObjectTranslation();
+        }
 
         GLint specularIntensityLoc = glGetUniformLocation(shader_program_id, "specularIntensity");
         glUniform1f(specularIntensityLoc, specularIntensity);
@@ -157,8 +164,17 @@ namespace PracticaKatya
         glUniform1f(shininessLoc, shininess);
 
         glm::mat4 model_matrix = glm::mat4(1);
-        model_matrix = glm::translate(model_matrix, translation);
-        model_matrix = glm::rotate(model_matrix, angle, rotation);
+        if (!invertRotation)
+        {
+            model_matrix = glm::translate(model_matrix, ObjectTranslation);
+            model_matrix = glm::rotate(model_matrix, angle, rotation);
+        }
+        else
+        {
+            model_matrix = glm::rotate(model_matrix, angle, rotation);
+            model_matrix = glm::translate(model_matrix, ObjectTranslation);
+        }
+
         model_matrix = glm::scale(model_matrix, glm::vec3(scaleFactor));
 
         glm::mat4 model_view_matrix = view_matrix * model_matrix;
@@ -319,5 +335,14 @@ namespace PracticaKatya
         }
 
         return static_cast<GLuint>(-1);
+    }
+
+    void Object::setParent(Object* newParent) 
+    {
+        parent = newParent; 
+    }
+    vec3 Object::getObjectTranslation()
+    {
+        return ObjectTranslation; 
     }
 }

@@ -28,8 +28,11 @@
             Object flor_1;
             Object flor_2;
             Object flor_3;
-
-            float   angle;
+            Object heart;
+            Object mariposa_0;
+            Object mariposa_1;
+            Object mariposa_2;
+            float  angle;
 
             Terrain terrain;
 

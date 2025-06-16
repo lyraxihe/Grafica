@@ -45,6 +45,8 @@ namespace PracticaKatya
         Shader shader;
 
         float  angle;
+        glm::vec3 ObjectTranslation;
+        Object* parent;
 
     public:
 
@@ -64,7 +66,7 @@ namespace PracticaKatya
         /// @param scaleFactor El valor de escala a aplicar al objeto
         /// @param specularIntensity El valor de specular del objeto
         /// @param shininess El valor de brillo del objeto
-        void render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor, float specularIntensity, float shininess);
+        virtual void render(glm::mat4 view_matrix, glm::vec3 translation, float angle, glm::vec3 rotation, float scaleFactor, float specularIntensity, float shininess, bool invertRotation);
         
         /// Se actualiza constantemente
         void update();
@@ -75,6 +77,14 @@ namespace PracticaKatya
         /// @param width  El ancho de la pantalla
         /// @param height El alto de la pantalla
         void resize(int width, int height);
+
+        /// Asigna el parent
+        /// @param newParent El parent a asignar
+        void setParent(Object* newParent);
+
+        /// Devuelve la variable ObjectTranslation
+        /// @return la translación del objeto
+        glm::vec3 getObjectTranslation();
 
     private:
         /// @brief crea el mesh
