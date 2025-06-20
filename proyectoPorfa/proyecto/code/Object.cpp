@@ -150,12 +150,11 @@ namespace PracticaKatya
     {
         shader.use();
 
-        ObjectTranslation = translation;
-        //comprueba si tiene padre y multiplica su translation por el del padre
-        if (parent != nullptr)
-        {
-            ObjectTranslation *= parent->getObjectTranslation();
-        }
+        objectTranslation = translation;
+        objectAngle = angle;
+        objectRotation = rotation;
+        objectScaleFactor = scaleFactor;
+        objectInvertRotation = invertRotation;
 
         GLint specularIntensityLoc = glGetUniformLocation(shader_program_id, "specularIntensity");
         glUniform1f(specularIntensityLoc, specularIntensity);
@@ -163,21 +162,33 @@ namespace PracticaKatya
         GLint shininessLoc = glGetUniformLocation(shader_program_id, "shininess");
         glUniform1f(shininessLoc, shininess);
 
+
+        if (parent != nullptr)
+        {
+            objectTranslation *= parent->objectTranslation;
+            objectAngle *= parent->objectAngle;
+            objectRotation *= parent->objectRotation;
+            objectScaleFactor *= parent->objectScaleFactor;
+        }
+
         glm::mat4 model_matrix = glm::mat4(1);
         if (!invertRotation)
         {
-            model_matrix = glm::translate(model_matrix, ObjectTranslation);
-            model_matrix = glm::rotate(model_matrix, angle, rotation);
+            model_matrix = glm::translate(model_matrix, objectTranslation);
+            model_matrix = glm::rotate(model_matrix, objectAngle, objectRotation);
         }
         else
         {
-            model_matrix = glm::rotate(model_matrix, angle, rotation);
-            model_matrix = glm::translate(model_matrix, ObjectTranslation);
+            model_matrix = glm::rotate(model_matrix, objectAngle, objectRotation);
+            model_matrix = glm::translate(model_matrix, objectTranslation);
         }
 
-        model_matrix = glm::scale(model_matrix, glm::vec3(scaleFactor));
+        model_matrix = glm::scale(model_matrix, glm::vec3(objectScaleFactor));
 
-        glm::mat4 model_view_matrix = view_matrix * model_matrix;
+
+        glm::mat4  model_view_matrix = view_matrix * model_matrix;
+
+
         glUniformMatrix4fv(model_view_matrix_id, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
 
         glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(model_view_matrix)));
@@ -341,8 +352,5 @@ namespace PracticaKatya
     {
         parent = newParent; 
     }
-    vec3 Object::getObjectTranslation()
-    {
-        return ObjectTranslation; 
-    }
+
 }

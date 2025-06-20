@@ -44,8 +44,12 @@ namespace PracticaKatya
 
         Shader shader;
 
-        float  angle;
-        glm::vec3 ObjectTranslation;
+        glm::vec3 objectTranslation;
+        float objectAngle;
+        glm::vec3 objectRotation;
+        float objectScaleFactor;
+        bool objectInvertRotation;
+
         Object* parent;
 
     public:
@@ -81,10 +85,6 @@ namespace PracticaKatya
         /// Asigna el parent
         /// @param newParent El parent a asignar
         void setParent(Object* newParent);
-
-        /// Devuelve la variable ObjectTranslation
-        /// @return la translación del objeto
-        glm::vec3 getObjectTranslation();
 
     private:
         /// @brief crea el mesh

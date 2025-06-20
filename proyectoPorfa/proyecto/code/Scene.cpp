@@ -106,10 +106,10 @@ namespace PracticaKatya
         mariposa_0.render(view_matrix,     glm::vec3(5.f, 1.f, 1.f),          -angle,        glm::vec3(0.f, 1.f, 0.f),        10.f,                .4f,                   5.f,       true);
        
         //                                             translate               angle                rotation               scalation         specularIntensity          shininess 
-        mariposa_1.render(view_matrix,     glm::vec3(1.2f, 1.3f, 3.f),        -angle,        glm::vec3(0.f, 1.f, 0.f),        10.f,                .4f,                   5.f,       true);
+        mariposa_1.render(view_matrix,     glm::vec3(1.2f, 1.3f, 3.f),          1,        glm::vec3(0.f, 1.f, 0.f),        1.f,                .4f,                   5.f,       true);
 
          //                                             translate              angle                rotation               scalation         specularIntensity          shininess 
-        mariposa_2.render(view_matrix,     glm::vec3(1.f, 0.7f, 2.f),         -angle,        glm::vec3(0.f, 1.f, 0.f),        10.f,                .4f,                   5.f,       true);
+        mariposa_2.render(view_matrix,     glm::vec3(1.f, 0.7f, 2.f),           1,        glm::vec3(0.f, 1.f, 0.f),        1.f,                .4f,                   5.f,       true);
 
         //                                             translate              rotation              scalation 
         terrain.render(view_matrix,        glm::vec3(0.f, -4.f, 0.f),  glm::vec3(1.f, 0.f, 0.f),      1.f          );
