@@ -1,9 +1,6 @@
 
-// Este código es de dominio público
-// angel.rodriguez@udit.es
-
 #include "Scene.hpp"
-#include <Window.hpp>
+#include "Window.hpp"
 
 using PracticaKatya::Scene;
 using PracticaKatya::Window;

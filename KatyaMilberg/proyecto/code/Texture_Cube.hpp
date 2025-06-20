@@ -7,8 +7,8 @@
 #include <memory>
 #include <string>
 #include <glad/glad.h>
-#include <Color.hpp>
-#include <Color_Buffer.hpp>
+#include "Color.hpp"
+#include "Color_Buffer.hpp"
 
 namespace PracticaKatya
 {
@@ -17,7 +17,7 @@ namespace PracticaKatya
     {
     private:
 
-        typedef udit::Color_Buffer< udit::Rgba8888 > Color_Buffer;
+        typedef PracticaKatya::Color_Buffer< PracticaKatya::Rgba8888 > Color_Buffer;
 
     private:
 

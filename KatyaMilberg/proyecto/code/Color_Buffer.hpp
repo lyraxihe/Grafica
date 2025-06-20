@@ -1,12 +1,12 @@
 
-// Este código es de dominio público
-// angel.rodriguez@udit.es
+/// @author Katya
+/// @copyright () Katya
 
 #pragma once
 
 #include <vector>
 
-namespace udit
+namespace PracticaKatya
 {
 
     template< typename COLOR >
