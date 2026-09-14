@@ -1,0 +1,1 @@
+A C++ 3D graphics demo built with OpenGL, SDL2, and GLM, featuring a heightmap-based terrain, animated skybox, textured objects (flowers, butterflies), free-fly camera controls, dynamic lighting, and an HDR bloom post-processing effect.
